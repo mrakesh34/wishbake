@@ -1,11 +1,12 @@
 import os
 import logging
+from pathlib import Path
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 
 logger = logging.getLogger("wishbake.db")
 logging.basicConfig(level=logging.INFO)
@@ -15,13 +16,13 @@ DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
+if not DATABASE_URL.startswith("postgresql://"):
+    raise RuntimeError("Set DATABASE_URL in backend/.env to the Neon PostgreSQL connection URL.")
+
 def create_db_engine(db_url: str):
-    if not db_url or db_url.startswith("sqlite"):
-        return create_engine("sqlite:///./wishbake.db", connect_args={"check_same_thread": False}, echo=False)
     return create_engine(db_url, pool_pre_ping=True, echo=False)
 
-active_url = DATABASE_URL if DATABASE_URL else "sqlite:///./wishbake.db"
-engine = create_db_engine(active_url)
+engine = create_db_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -37,21 +38,28 @@ def init_db():
     """Initialize database tables and seed catalog if empty with resilient fallback."""
     global engine, SessionLocal
 
-    from wishbake_backend.db_models import CakeDB
-    from wishbake_backend.data import PRESET_CAKES
+    from backend.db_models import CakeDB
+    from backend.data import PRESET_CAKES
 
     try:
-        if DATABASE_URL and not DATABASE_URL.startswith("sqlite"):
-            logger.info(f"Connecting to PostgreSQL database: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else DATABASE_URL}")
-        else:
-            logger.info("Using local SQLite database: wishbake.db")
+        logger.info("Connecting to configured Neon/PostgreSQL database.")
             
         Base.metadata.create_all(bind=engine)
+        # create_all does not add fields to existing tables; keep this tiny additive
+        # migration for installs that predate password accounts and account-owned orders.
+        inspector = inspect(engine)
+        additions = {
+            "users": {"password_hash": "VARCHAR(255)"},
+            "orders": {"user_id": "VARCHAR(50)", "delivery_fee": "FLOAT NOT NULL DEFAULT 149"},
+        }
+        with engine.begin() as connection:
+            for table, columns in additions.items():
+                existing = {column["name"] for column in inspector.get_columns(table)}
+                for name, definition in columns.items():
+                    if name not in existing:
+                        connection.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {definition}"))
     except Exception as e:
-        logger.warning(f"⚠️ Could not connect to configured PostgreSQL database ({e}). Falling back to local SQLite: wishbake.db")
-        engine = create_db_engine("sqlite:///./wishbake.db")
-        SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        Base.metadata.create_all(bind=engine)
+        raise RuntimeError("Configured PostgreSQL database is unavailable; refusing to use local SQLite.") from e
 
     # Seed initial cakes catalog if empty
     db = SessionLocal()

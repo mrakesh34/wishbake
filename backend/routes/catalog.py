@@ -2,9 +2,9 @@ from fastapi import APIRouter, Query, Depends
 from typing import Optional, List
 from sqlalchemy.orm import Session
 
-from wishbake_backend.database import get_db
-from wishbake_backend.db_models import CakeDB
-from wishbake_backend.data import PRESET_CAKES, CUSTOMIZER_OPTIONS
+from backend.database import get_db
+from backend.db_models import CakeDB
+from backend.data import PRESET_CAKES, CUSTOMIZER_OPTIONS
 
 router = APIRouter(prefix="/api", tags=["Catalog"])
 

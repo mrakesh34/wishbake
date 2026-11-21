@@ -59,6 +59,7 @@ class OrderResponse(BaseModel):
     customer_email: Optional[str] = None
     customer_phone: Optional[str] = None
     total_amount: float
+    delivery_fee: float = 149.0
     currency: str = "INR"
     status: str
     created_at: str

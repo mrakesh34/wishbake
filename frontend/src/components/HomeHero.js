@@ -92,7 +92,7 @@ export class HomeHero {
             <!-- Floating Price Badge -->
             <div class="absolute -bottom-3 -right-2 lg:bottom-4 lg:-right-4 z-20 glass-card px-5 py-3 rounded-2xl float-badge-slow">
               <span class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold block">Starting from</span>
-              <span class="font-display font-bold text-2xl text-primary">$45</span>
+              <span class="font-display font-bold text-2xl text-primary">₹1,799</span>
             </div>
           </div>
 

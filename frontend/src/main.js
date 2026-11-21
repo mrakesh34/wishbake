@@ -33,6 +33,7 @@ class App {
       this.cartState,
       (updatedCart) => {
         this.cartState = updatedCart;
+        if (authManager.isLoggedIn()) authManager.saveCart(updatedCart).catch(console.error);
       },
       () => {
         this.authModal.open();
@@ -78,9 +79,19 @@ class App {
 
     authManager.onAuthChange(({ user, isLoggedIn }) => {
       this.updateHeaderAuthUI(user);
+      if (isLoggedIn) authManager.fetchCart().then(({ items }) => {
+        this.cartState = items || [];
+        this.cartDrawer.cart = this.cartState;
+        this.cartDrawer.renderCartItems();
+      }).catch(console.error);
     });
 
     this.updateHeaderAuthUI(authManager.getUser());
+    if (authManager.isLoggedIn()) authManager.fetchCart().then(({ items }) => {
+      this.cartState = items || [];
+      this.cartDrawer.cart = this.cartState;
+      this.cartDrawer.renderCartItems();
+    }).catch(console.error);
   }
 
   updateHeaderAuthUI(user) {

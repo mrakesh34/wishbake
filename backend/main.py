@@ -1,15 +1,16 @@
 import os
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 
-from wishbake_backend.database import init_db, engine
-from wishbake_backend.routes.catalog import router as catalog_router
-from wishbake_backend.routes.orders import router as orders_router
-from wishbake_backend.routes.auth import router as auth_router
+from backend.database import init_db, engine
+from backend.routes.catalog import router as catalog_router
+from backend.routes.orders import router as orders_router
+from backend.routes.auth import router as auth_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,19 +20,19 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="WISHBAKE Backend API",
-    description="REST API for 3D Custom Cake Studio & Artisanal Confectionery Orders with PostgreSQL & Mail-OTP",
+    description="REST API for WISHBAKE storefront, custom cake pricing, accounts, carts, and orders.",
     version="1.0.0",
     lifespan=lifespan
 )
 
 # Configure CORS for decoupled frontend deployment
-allowed_origins_env = os.getenv("CORS_ORIGINS", "*")
+allowed_origins_env = os.getenv("CORS_ORIGINS", "http://127.0.0.1:5173,http://localhost:5173")
 allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins if allowed_origins else ["*"],
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials="*" not in allowed_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -59,4 +60,4 @@ def health_check():
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", "8000"))
-    uvicorn.run("wishbake_backend.main:app", host="0.0.0.0", port=port, reload=True)
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=True)

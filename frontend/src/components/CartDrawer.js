@@ -3,7 +3,7 @@ import { apiUrl } from '../services/api.js';
 
 export class CartDrawer {
   constructor(cartState, onCartUpdateCallback, onOpenAuthCallback) {
-    this.cart = cartState || [];
+    this.cart = authManager.isLoggedIn() ? [] : (cartState || []);
     this.onCartUpdate = onCartUpdateCallback;
     this.onOpenAuth = onOpenAuthCallback;
     this.deliveryCost = 149.0;
@@ -44,6 +44,11 @@ export class CartDrawer {
 
     if (checkoutBtn) {
       checkoutBtn.addEventListener('click', () => {
+        if (!authManager.isLoggedIn()) {
+          alert('Please sign in to save your cart and order to your account.');
+          this.onOpenAuth?.();
+          return;
+        }
         if (this.cart.length === 0) {
           alert('Your confectionery bag is empty! Add a custom or signature cake first.');
           return;
@@ -289,7 +294,7 @@ export class CartDrawer {
               <span>Have a WISHBAKE account?</span>
             </div>
             <button type="button" id="checkout-quick-signin-btn" class="bg-primary text-white text-[11px] font-bold px-3 py-1 rounded-lg hover:bg-primary/90 transition-colors">
-              Sign In with OTP
+              Sign In / Sign Up
             </button>
           </div>
         `;

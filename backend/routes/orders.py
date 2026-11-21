@@ -4,15 +4,17 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Header, Depends
 from sqlalchemy.orm import Session
 
-from wishbake_backend.database import get_db
-from wishbake_backend.db_models import OrderDB, UserDB
-from wishbake_backend.models import (
+from backend.database import get_db
+from backend.db_models import CakeDB, OrderDB, UserDB
+from backend.routes.auth import get_current_user_from_token
+from backend.models import (
     PriceCalculationRequest, PriceCalculationResponse,
     CreateOrderRequest, OrderResponse
 )
-from wishbake_backend.data import CUSTOMIZER_OPTIONS
+from backend.data import CUSTOMIZER_OPTIONS, PRESET_CAKES
 
 router = APIRouter(prefix="/api", tags=["Orders & Pricing"])
+DELIVERY_FEE_INR = 149.0
 
 def calculate_price_for_selection(selection) -> PriceCalculationResponse:
     # Find base size cost
@@ -97,9 +99,32 @@ def calculate_customizer_price(req: PriceCalculationRequest):
     return calculate_price_for_selection(req.selection)
 
 @router.post("/orders", response_model=OrderResponse)
-def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
+def create_order(req: CreateOrderRequest, db: Session = Depends(get_db), user=Depends(get_current_user_from_token)):
+    if not user:
+        raise HTTPException(status_code=401, detail="Sign in before placing an order.")
     order_id = f"WISH-{uuid.uuid4().hex[:8].upper()}"
-    total_amount = sum(item.unit_price * item.quantity for item in req.items)
+    persisted_items = []
+    items_subtotal = 0.0
+    for item in req.items:
+        stored_item = item.model_dump()
+        if item.item_type == "preset":
+            cake = db.query(CakeDB).filter(CakeDB.id == item.cake_id).first()
+            preset = next((cake_data for cake_data in PRESET_CAKES if cake_data["id"] == item.cake_id), None)
+            if not cake and not preset:
+                raise HTTPException(status_code=422, detail=f"Cake '{item.cake_id}' is unavailable.")
+            stored_item["title"] = cake.title if cake else preset["title"]
+            stored_item["unit_price"] = float(cake.price if cake else preset["price"])
+        elif item.item_type == "custom":
+            if not item.selection:
+                raise HTTPException(status_code=422, detail="Custom cake items need a cake selection.")
+            priced = calculate_price_for_selection(item.selection)
+            stored_item["title"] = "Custom Cake"
+            stored_item["unit_price"] = priced.total_price
+        else:
+            raise HTTPException(status_code=422, detail="Unsupported order item type.")
+        items_subtotal += stored_item["unit_price"] * item.quantity
+        persisted_items.append(stored_item)
+    total_amount = round(items_subtotal + DELIVERY_FEE_INR, 2)
     
     address_parts = [req.flat_house_no, req.street_locality]
     if req.landmark:
@@ -107,7 +132,7 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
     address_parts.append(f"{req.city}, {req.state} - {req.pincode}")
     delivery_address = ", ".join(address_parts)
     
-    email_clean = req.customer_email.strip().lower()
+    email_clean = user.email
     
     order_record = OrderDB(
         order_id=order_id,
@@ -120,16 +145,18 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
         recipient_name=req.recipient_name,
         special_instructions=req.special_instructions,
         total_amount=round(total_amount, 2),
+        delivery_fee=DELIVERY_FEE_INR,
         currency="INR",
         status="CONFIRMED",
         created_at=datetime.utcnow().isoformat() + "Z",
-        items=[item.model_dump() for item in req.items]
+        items=persisted_items,
+        user_id=user.user_id
     )
     
     db.add(order_record)
 
     # If customer is registered in PostgreSQL, update saved address if empty
-    user = db.query(UserDB).filter(UserDB.email == email_clean).first()
+    user = db.query(UserDB).filter(UserDB.id == user.user_id).first()
     if user:
         if not user.phone:
             user.phone = req.customer_phone
@@ -160,6 +187,7 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
         recipient_name=order_record.recipient_name,
         special_instructions=order_record.special_instructions,
         total_amount=order_record.total_amount,
+        delivery_fee=order_record.delivery_fee,
         currency=order_record.currency,
         status=order_record.status,
         created_at=order_record.created_at,
@@ -167,9 +195,11 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db)):
     )
 
 @router.get("/orders/{order_id}", response_model=OrderResponse)
-def get_order(order_id: str, db: Session = Depends(get_db)):
+def get_order(order_id: str, db: Session = Depends(get_db), user=Depends(get_current_user_from_token)):
     order = db.query(OrderDB).filter(OrderDB.order_id == order_id).first()
     if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    if not user or order.user_id != user.user_id:
         raise HTTPException(status_code=404, detail="Order not found")
     
     return OrderResponse(
@@ -183,6 +213,7 @@ def get_order(order_id: str, db: Session = Depends(get_db)):
         recipient_name=order.recipient_name,
         special_instructions=order.special_instructions,
         total_amount=order.total_amount,
+        delivery_fee=order.delivery_fee,
         currency=order.currency,
         status=order.status,
         created_at=order.created_at,

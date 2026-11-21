@@ -1,45 +1,24 @@
-# 🎂 WISHBAKE - Two Independent Repositories Setup
+# WISHBAKE
 
-This project is organized into two completely decoupled repositories:
+Premium custom-cake storefront for delivery in Bhubaneswar, Odisha. Customers can browse cakes, customize a cake in 3D, keep an account-backed cart, and place INR orders. The payment provider is intentionally undecided; orders are currently recorded without payment.
 
-1. **`wishbake_backend/`** (Backend Repository)
-   - Python FastAPI REST API
-   - PostgreSQL Database Integration (SQLAlchemy ORM)
-   - Mail-OTP Verification
-   - Self-contained with its own `.env`, `.gitignore`, `requirements.txt`, and `Dockerfile`.
+## Start locally
 
-2. **`wishbake_frontend/`** (Frontend Repository)
-   - Vite Single Page Application (Three.js 3D Customizer, Cart, Auth Modal)
-   - Self-contained with its own `.env`, `.gitignore`, `package.json`, and `vercel.json`.
+1. Set `DATABASE_URL` in `backend/.env` to the Neon PostgreSQL connection string. Never commit or share this secret.
+2. Start the API from the repository root:
 
----
+   ```powershell
+   python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload --reload-dir backend
+   ```
 
-## 🐍 1. `wishbake_backend` Deployment & Run Guide
+3. Start the storefront in another terminal:
 
-### Run Locally:
-```bash
-cd wishbake_backend
-python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-```
+   ```powershell
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-### Environment Settings (`wishbake_backend/.env`):
-- `DATABASE_URL`: PostgreSQL connection string (e.g. `postgresql://user:pass@host:5432/wishbake_db`). If left blank, it automatically uses local SQLite `wishbake.db`.
-- `CORS_ORIGINS`: Comma-separated allowed frontend URLs (e.g. `https://wishbake.vercel.app,http://localhost:5173`).
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`: SMTP configuration for Mail-OTP.
+Storefront: http://127.0.0.1:5173/ · API docs: http://127.0.0.1:8000/docs · Health: http://127.0.0.1:8000/health
 
----
-
-## ⚡ 2. `wishbake_frontend` Deployment & Run Guide
-
-### Run Locally:
-```bash
-cd wishbake_frontend
-npm install
-npm run dev
-```
-
-### Environment Settings (`wishbake_frontend/.env`):
-- `VITE_API_URL`: URL of your backend API (e.g. `http://127.0.0.1:8000` for local dev, or `https://wishbake-api.onrender.com` on Vercel).
-
-### Deploy to Vercel:
-Push `wishbake_frontend` to its own GitHub repository, import into Vercel, set `VITE_API_URL` under Environment Variables, and deploy!
+See [PROJECT.md](PROJECT.md) for architecture, API routes, decisions, and the next implementation phases.

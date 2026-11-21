@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import Column, String, Float, Integer, Boolean, DateTime, Text, JSON
-from wishbake_backend.database import Base
+from backend.database import Base
 
 class UserDB(Base):
     __tablename__ = "users"
@@ -11,6 +11,7 @@ class UserDB(Base):
     phone = Column(String(50), nullable=True)
     addresses = Column(JSON, default=list) # Array of saved delivery addresses
     is_verified = Column(Boolean, default=True)
+    password_hash = Column(String(255), nullable=True)
     created_at = Column(String(50), default=lambda: datetime.utcnow().isoformat() + "Z")
 
 class OtpDB(Base):
@@ -44,10 +45,19 @@ class OrderDB(Base):
     recipient_name = Column(String(255), nullable=True)
     special_instructions = Column(Text, nullable=True)
     total_amount = Column(Float, nullable=False)
+    delivery_fee = Column(Float, nullable=False, default=149.0)
     currency = Column(String(10), default="INR")
     status = Column(String(50), default="CONFIRMED")
     created_at = Column(String(50), default=lambda: datetime.utcnow().isoformat() + "Z")
     items = Column(JSON, default=list)
+    user_id = Column(String(50), index=True, nullable=True)
+
+class CartDB(Base):
+    __tablename__ = "carts"
+
+    user_id = Column(String(50), primary_key=True, index=True)
+    items = Column(JSON, default=list, nullable=False)
+    updated_at = Column(String(50), default=lambda: datetime.utcnow().isoformat() + "Z")
 
 class CakeDB(Base):
     __tablename__ = "cakes"
