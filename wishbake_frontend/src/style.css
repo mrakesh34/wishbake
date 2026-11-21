@@ -1,0 +1,426 @@
+/* ═══════════════════════════════════════════════════════════════
+   WISHBAKE — Premium Design System & Scroll Animations
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Scroll Progress Bar ── */
+#scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #a03a57, #ff85a2, #e8a04b);
+  z-index: 9999;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(160, 58, 87, 0.4);
+  pointer-events: none;
+}
+
+/* ── Scroll Reveal System ── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-scale.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Staggered delay classes */
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+.delay-400 { transition-delay: 0.4s; }
+.delay-500 { transition-delay: 0.5s; }
+.delay-600 { transition-delay: 0.6s; }
+.delay-700 { transition-delay: 0.7s; }
+.delay-800 { transition-delay: 0.8s; }
+
+/* ── Animation Keyframes ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(160, 58, 87, 0.15); }
+  50% { box-shadow: 0 0 40px rgba(160, 58, 87, 0.3); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes scroll-hint {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.4; transform: translateY(10px); }
+}
+
+/* ── Gradient Text ── */
+.gradient-text {
+  background: linear-gradient(135deg, #a03a57 0%, #ff85a2 50%, #e8a04b 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* ── Glassmorphism Cards ── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(92, 64, 58, 0.08);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(92, 64, 58, 0.15);
+}
+
+/* ── Premium Glass Panel ── */
+@layer utilities {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .cream-effect {
+    background: rgba(255, 248, 246, 0.9);
+    backdrop-filter: blur(8px);
+  }
+
+  .soft-shadow {
+    box-shadow: 0 8px 30px rgba(92, 64, 58, 0.08);
+  }
+
+  .active-shadow {
+    box-shadow: 0 14px 40px rgba(160, 58, 87, 0.18);
+  }
+}
+
+/* ── Premium Hover Tilt Effect ── */
+.tilt-card {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  perspective: 800px;
+}
+
+.tilt-card:hover {
+  transform: perspective(800px) rotateY(-3deg) rotateX(2deg) scale(1.02);
+}
+
+/* ── Floating Badges ── */
+.float-badge {
+  animation: float 3s ease-in-out infinite;
+}
+
+.float-badge-slow {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+/* ── Animated Border ── */
+.animated-border {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(135deg, #a03a57, #ff85a2, #e8a04b, #a03a57);
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Scroll Hint Chevron ── */
+.scroll-hint-chevron {
+  animation: scroll-hint 2s ease-in-out infinite;
+}
+
+/* ── Shimmer Loading Effect ── */
+.shimmer {
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.5) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ── Section Divider Gradient ── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #dbc0c4, #a03a57, #dbc0c4, transparent);
+}
+
+/* ── Counter Stats Animation ── */
+.counter-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Parallax Background Sections ── */
+.parallax-section {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+/* ── Hero Decorative Orbs ── */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 133, 162, 0.25) 0%, transparent 70%);
+  top: -10%;
+  right: -5%;
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+.hero-orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(232, 160, 75, 0.2) 0%, transparent 70%);
+  bottom: -5%;
+  left: -5%;
+  animation: floatSlow 10s ease-in-out infinite;
+  animation-delay: -3s;
+}
+
+.hero-orb-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(160, 58, 87, 0.12) 0%, transparent 70%);
+  top: 40%;
+  left: 30%;
+  animation: float 6s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fff8f6;
+}
+::-webkit-scrollbar-thumb {
+  background: #dbc0c4;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a03a57;
+}
+
+/* ── Three.js Canvas Container ── */
+.three-canvas-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: radial-gradient(circle at center, #ffffff 0%, #fdf1ee 100%);
+}
+
+.three-canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+  cursor: grab;
+}
+
+.three-canvas-container canvas:active {
+  cursor: grabbing;
+}
+
+/* ── Feature Card Icons ── */
+.feature-icon-wrapper {
+  position: relative;
+}
+
+.feature-icon-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(160, 58, 87, 0.15), rgba(255, 133, 162, 0.1));
+  animation: pulse-glow 3s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* ── Horizontal Scroll Container ── */
+.horizontal-scroll {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.horizontal-scroll > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ── Testimonial Quote Mark ── */
+.quote-mark {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  line-height: 1;
+  color: rgba(160, 58, 87, 0.1);
+  position: absolute;
+  top: -0.5rem;
+  left: 0.5rem;
+  pointer-events: none;
+}
+
+/* ── CTA Gradient Section ── */
+.cta-gradient {
+  background: linear-gradient(135deg, #a03a57 0%, #771a38 50%, #a03a57 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+/* ── Responsive Helpers ── */
+@media (max-width: 768px) {
+  .scroll-reveal { transform: translateY(25px); }
+  .scroll-reveal-left { transform: translateX(-30px); }
+  .scroll-reveal-right { transform: translateX(30px); }
+  
+  .hero-orb { display: none; }
+}
+
+/* ── Smooth Scrolling ── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Auth Modal & Shake Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}

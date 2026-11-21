@@ -1,0 +1,344 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Shop - Lumière Pâtisserie</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#fff8f6",
+                      "surface-dim": "#e3d8d5",
+                      "surface-tint": "#a03a57",
+                      "on-tertiary-fixed-variant": "#5c403a",
+                      "inverse-on-surface": "#faeeeb",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-fixed": "#3f0017",
+                      "background": "#fff8f6",
+                      "on-secondary-container": "#666353",
+                      "on-tertiary-fixed": "#2b1611",
+                      "outline-variant": "#dbc0c4",
+                      "on-error": "#ffffff",
+                      "primary": "#a03a57",
+                      "surface-container-highest": "#ebe0dd",
+                      "on-surface": "#201a19",
+                      "primary-fixed-dim": "#ffb1c1",
+                      "tertiary-fixed-dim": "#e5beb5",
+                      "error": "#ba1a1a",
+                      "tertiary-container": "#c8a39b",
+                      "on-tertiary-container": "#543933",
+                      "on-error-container": "#93000a",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#625f4f",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed": "#1e1c10",
+                      "secondary-container": "#e5e0cc",
+                      "surface-variant": "#ebe0dd",
+                      "surface-container": "#f7ebe9",
+                      "on-surface-variant": "#554245",
+                      "surface-container-high": "#f1e6e3",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed-dim": "#ccc6b4",
+                      "on-primary-fixed-variant": "#812240",
+                      "inverse-surface": "#352f2d",
+                      "surface-container-low": "#fdf1ee",
+                      "on-background": "#201a19",
+                      "tertiary": "#755750",
+                      "tertiary-fixed": "#ffdad2",
+                      "primary-container": "#ff85a2",
+                      "on-primary-container": "#771a38",
+                      "outline": "#887175",
+                      "surface-bright": "#fff8f6",
+                      "primary-fixed": "#ffd9df",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#e8e2cf",
+                      "on-secondary-fixed-variant": "#4a4739",
+                      "inverse-primary": "#ffb1c1"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "20px",
+                      "unit": "8px",
+                      "margin-desktop": "64px",
+                      "container-max": "1280px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "display-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "headline-lg": [
+                              "Playfair Display"
+                      ],
+                      "label-bold": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "display-lg": [
+                              "56px",
+                              {
+                                      "lineHeight": "64px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .product-shadow {
+            box-shadow: 0 4px 20px rgba(92, 64, 58, 0.15);
+        }
+        .btn-press:active {
+            transform: scale(0.98);
+        }
+      </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen pt-20">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-surface-variant/80 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center h-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<a class="font-display-lg text-headline-md text-primary dark:text-primary-fixed-dim" href="#">Lumière Pâtisserie</a>
+<nav class="hidden md:flex gap-8 items-center font-label-bold text-label-bold">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300 hover:scale-105 transition-transform duration-200" href="#">Home</a>
+<a class="text-primary border-b-2 border-primary pb-1 active:scale-95 transition-all duration-150" href="#">Shop</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300 hover:scale-105 transition-transform duration-200" href="#">Customizer</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300 hover:scale-105 transition-transform duration-200" href="#">About</a>
+</nav>
+<div class="flex items-center gap-4 text-primary dark:text-primary-fixed-dim">
+<button class="hover:scale-105 transition-transform duration-200 active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-[48px] md:py-[64px]">
+<!-- Custom Order Banner -->
+<section class="mb-[64px] rounded-2xl overflow-hidden relative product-shadow group cursor-pointer" onclick="window.location.href='#'">
+<div class="bg-cover bg-center w-full h-[300px] md:h-[400px] absolute inset-0 z-0" data-alt="A highly detailed 3D render of a luxurious, multi-tiered wedding cake with intricate frosting details, soft elegant pinks and cream colors, set in a bright modern minimal studio with soft diffused lighting, highlighting the tactile texture of the fondant." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBNTxo4vysMhn-bDH7_SFJ6v_aGdwUG0OWaKR1wIc7WZxrXWmBidBo_r_r1hv0yW1ef_EwZF2vWOVvT0OvbfQouS7Qqhkc9kglqpp54OWWuLFZFEKAB2IsGgP15VqlYHj2vHKN1yXWaKy5_vVnTG1v9EWvUVu3QlNylRmtLsHvTRdyedjHGRWB1tMGL9AdxPrRiblJdK_6ZoPGkErwRcCeH67ikuvKX4qgBwIhj1qepFGTwOczuCHcn')"></div>
+<div class="absolute inset-0 bg-surface-container-lowest/60 backdrop-blur-sm z-10"></div>
+<div class="relative z-20 h-full flex flex-col items-center justify-center text-center p-8">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4">Design Your Dream Cake</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-2xl">Step into our digital atelier and customize every layer, flavor, and flourish to create a truly personalized masterpiece.</p>
+<button class="bg-primary text-on-primary font-label-bold text-label-bold px-8 py-4 rounded-full btn-press transition-transform shadow-lg hover:bg-on-primary-fixed-variant flex items-center gap-2">
+<span class="material-symbols-outlined">palette</span>
+                    Start Customizing
+                </button>
+</div>
+</section>
+<!-- Filters & Grid Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-[48px] gap-6">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Ready to Indulge</h2>
+<div class="flex flex-wrap gap-4 font-label-sm text-label-sm">
+<div class="relative">
+<select class="appearance-none bg-secondary-container text-on-secondary-container rounded-full px-6 py-2 pr-10 outline-none focus:ring-2 focus:ring-primary border-none cursor-pointer">
+<option value="">Flavor: All</option>
+<option value="chocolate">Decadent Chocolate</option>
+<option value="vanilla">Madagascar Vanilla</option>
+<option value="fruit">Seasonal Fruit</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-secondary-container">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-secondary-container text-on-secondary-container rounded-full px-6 py-2 pr-10 outline-none focus:ring-2 focus:ring-primary border-none cursor-pointer">
+<option value="">Size: All</option>
+<option value="petite">Petite (4-6 slices)</option>
+<option value="classic">Classic (8-12 slices)</option>
+<option value="grand">Grand (15+ slices)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-secondary-container">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-secondary-container text-on-secondary-container rounded-full px-6 py-2 pr-10 outline-none focus:ring-2 focus:ring-primary border-none cursor-pointer">
+<option value="">Occasion: All</option>
+<option value="birthday">Birthday</option>
+<option value="anniversary">Anniversary</option>
+<option value="just-because">Just Because</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-secondary-container">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[24px]">
+<!-- Card 1 -->
+<article class="bg-surface-container rounded-2xl p-6 product-shadow flex flex-col items-center relative group">
+<div class="w-full aspect-square mb-6 relative">
+<img class="w-full h-full object-contain absolute inset-0 transform group-hover:scale-105 transition-transform duration-500 z-10" data-alt="A flawless 3D render of a glossy strawberry mousse dome cake on a minimal ceramic plate, set against a soft cream background. The texture is hyper-realistic, looking incredibly soft and appetizing, with pristine lighting highlighting the glaze." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2Rwc8uMcb5sHSnhthnP7c5FnVwQ7PMgbSNRYR6dECe82J3VLOry-RsXZn1eE4k6jr1daySaTq5uCi8VYSOdFuy1Bzm1PFv7YK-VMUdNbEFlHlbZrfWs0Nrii-Ln0IetyAXBAmU_4bzUPZ9inZ2e99nFOKHCzL4sPCya-4-aeEEVRTwi6aqdTE1uF1M_Ez_DB7wyZKEZSD2yVCKf5a90XviFxld5VeHLQlV8T2vNmEXh_UaHKiABnV">
+<!-- Decorative back splash -->
+<div class="absolute inset-4 bg-tertiary-fixed-dim/30 rounded-full z-0 blur-xl"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 text-center">Fraise Mousse Dome</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center line-clamp-2">Delicate strawberry mousse with a hidden vanilla bean sponge center.</p>
+<div class="flex items-center justify-between w-full mt-auto">
+<span class="font-label-bold text-label-bold text-primary">₹45.00</span>
+<button aria-label="Add to cart" class="bg-primary text-on-primary w-10 h-10 rounded-full flex items-center justify-center btn-press hover:bg-on-primary-fixed-variant transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container rounded-2xl p-6 product-shadow flex flex-col items-center relative group">
+<div class="w-full aspect-square mb-6 relative">
+<img class="w-full h-full object-contain absolute inset-0 transform group-hover:scale-105 transition-transform duration-500 z-10" data-alt="A hyper-realistic 3D render of a rich, dark chocolate layered cake with glossy ganache drip, decorated with delicate gold leaf flakes, placed on a matte soft-pink pedestal. Soft, warm directional lighting enhances the depth and richness of the chocolate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtytlI1Vtj20GPUzByFzMeZVfUkxo5j52TJyGEIcYLYty5OLT4nQ1SeRZC4bf7RwkyhShsBeGRa5KTPxTj6FsQIvONdunJHM9yMDHPZWlugg6_vT7NlTZ4nTNf05OdkbrznsLei65fJ9iV20AnWnxS0ZLdEsSUy82sNisNsVA7q7sigo0nwpPhbrqZQHBzC-n05XM16VGyxh_FM5HervovGjfW-qYbnVrurKBw7BiiiqayeRdtMMno">
+<div class="absolute inset-4 bg-secondary-fixed-dim/30 rounded-full z-0 blur-xl"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 text-center">Noir Velvet Truffle</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center line-clamp-2">Deep, intense dark chocolate layers enveloped in silky ganache.</p>
+<div class="flex items-center justify-between w-full mt-auto">
+<span class="font-label-bold text-label-bold text-primary">₹65.00</span>
+<button aria-label="Add to cart" class="bg-primary text-on-primary w-10 h-10 rounded-full flex items-center justify-center btn-press hover:bg-on-primary-fixed-variant transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container rounded-2xl p-6 product-shadow flex flex-col items-center relative group">
+<div class="w-full aspect-square mb-6 relative">
+<img class="w-full h-full object-contain absolute inset-0 transform group-hover:scale-105 transition-transform duration-500 z-10" data-alt="A beautiful 3D render of a lemon chiffon cake with bright yellow mirror glaze and intricate white chocolate swirls, set against a muted warm beige background. The lighting is crisp and inviting, highlighting the refreshing nature of the dessert." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzl_CJrdQV9WOHMLuRoxEO3aL44mKgFgSl3Gag7PfUNy4VaVOygn5XOX4LewDN__miRUmCsHYH7jaJBkWvMj4rtNuFfL2zy45MjPerG0vPmhRucgNq0W3QHPnoz6p3SV0PKiyXGWqDyYhnIiVxUAlOp_tPjWJOZt5dWkSr3T4YHsl31vEHp5ypFqNGqcNxb1l4_H4OwycQ4nBopdmQMpwt5vPODJVFow3AHofnbG9NOjgr7HcvXWkC">
+<div class="absolute inset-4 bg-primary-fixed-dim/20 rounded-full z-0 blur-xl"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 text-center">Citrus Sunshine Glaze</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center line-clamp-2">Light lemon sponge paired with zesty curd and sweet mirror glaze.</p>
+<div class="flex items-center justify-between w-full mt-auto">
+<span class="font-label-bold text-label-bold text-primary">₹55.00</span>
+<button aria-label="Add to cart" class="bg-primary text-on-primary w-10 h-10 rounded-full flex items-center justify-center btn-press hover:bg-on-primary-fixed-variant transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="bg-surface-container rounded-2xl p-6 product-shadow flex flex-col items-center relative group">
+<div class="w-full aspect-square mb-6 relative">
+<img class="w-full h-full object-contain absolute inset-0 transform group-hover:scale-105 transition-transform duration-500 z-10" data-alt="An exquisite 3D render of a matcha green tea layered crepe cake, with visible thin layers and a light dusting of vibrant green matcha powder on top, served on a modern white plate. Soft studio lighting emphasizing the soft textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe_tlv1EQNcLhFYFI2wNch1Mo1D8o24vxR7A9i-gU2QAKPQqrmy7dKPyeyUoGtZt6DmwxKZarPEIkUvyovqw1Q5zRSuW7Z_o05V2TqcglGAS26ly318eEIz3hgHpVuo6BgKo0LJdTzjTcSoXZzYolYW9iF-BgvG5QT8KZa_8-objtWIyJcH4lZNbDUlGxXX3_fLbRZhQudN1MgbUUoCR2vFvs1NS31gUxdBFNRGZqNEkFDyu7nF6aM">
+<div class="absolute inset-4 bg-surface-tint/10 rounded-full z-0 blur-xl"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 text-center">Matcha Mille Crêpe</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center line-clamp-2">Twenty delicate crêpe layers separated by light matcha cream.</p>
+<div class="flex items-center justify-between w-full mt-auto">
+<span class="font-label-bold text-label-bold text-primary">₹70.00</span>
+<button aria-label="Add to cart" class="bg-primary text-on-primary w-10 h-10 rounded-full flex items-center justify-center btn-press hover:bg-on-primary-fixed-variant transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+</article>
+<!-- Generate more cards to fill the grid -->
+<!-- Card 5 -->
+<article class="bg-surface-container rounded-2xl p-6 product-shadow flex flex-col items-center relative group">
+<div class="w-full aspect-square mb-6 relative">
+<img class="w-full h-full object-contain absolute inset-0 transform group-hover:scale-105 transition-transform duration-500 z-10" data-alt="A 3D render of a rustic style naked cake adorned with fresh berries and edible flowers, sitting on a natural wood slice in a clean, minimalist setting. Soft, ethereal lighting creates a romantic and artisanal mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSQsKseEYZqRnEM1ABGvMCVJNX4B54saRq2EwbTCWoYvvXnjiCFCaaQE9y8t1SJy-XuHDHv_fPLSYRWAw6J7k5rEpWt7etdw1lhpAuRoltKqM75S5YoEI9q468yiggshWGvEIEDFQbWC26QccExxuLaCvjwyUY7HM5lwuH1aYkdgJVcs3jmG3XVc0oEM7jxw23eVCSP4eAN50XQHEa9rEgFnDgIzAu-NuW_4VN6TufvnQfpMMBjbWb">
+<div class="absolute inset-4 bg-secondary-fixed/40 rounded-full z-0 blur-xl"></div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 text-center">Rustic Berry Blossom</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center line-clamp-2">Naked vanilla sponge loaded with fresh seasonal berries and cream.</p>
+<div class="flex items-center justify-between w-full mt-auto">
+<span class="font-label-bold text-label-bold text-primary">₹60.00</span>
+<button aria-label="Add to cart" class="bg-primary text-on-primary w-10 h-10 rounded-full flex items-center justify-center btn-press hover:bg-on-primary-fixed-variant transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+</article>
+</div>
+<div class="mt-[64px] flex justify-center">
+<button class="border-2 border-outline text-on-surface font-label-bold text-label-bold px-8 py-3 rounded-full hover:bg-surface-container-high transition-colors">Load More Delights</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest w-full rounded-t-xl border-t border-outline-variant mt-[80px]">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-mobile md:px-margin-desktop py-16 max-w-container-max mx-auto">
+<div class="md:col-span-1 mb-8 md:mb-0">
+<h2 class="font-display-lg text-headline-md text-primary dark:text-primary-fixed-dim mb-4">Lumière Pâtisserie</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 Lumière Pâtisserie. Handcrafted with Digital Indulgence.</p>
+</div>
+<div class="flex flex-col gap-4 font-body-md text-body-md">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Shipping Info</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Us</a>
+</div>
+</div>
+</footer>
+
+
+</body></html>

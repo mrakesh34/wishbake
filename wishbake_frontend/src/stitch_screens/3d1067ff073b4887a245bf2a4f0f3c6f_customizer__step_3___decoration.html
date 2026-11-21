@@ -1,0 +1,435 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>L'Art du Gâteau - Artful Decor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#543933",
+                      "on-secondary-fixed-variant": "#4a4739",
+                      "primary-fixed-dim": "#ffb1c1",
+                      "tertiary-fixed": "#ffdad2",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#fff8f6",
+                      "tertiary-fixed-dim": "#e5beb5",
+                      "on-primary-container": "#771a38",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#554245",
+                      "on-primary-fixed": "#3f0017",
+                      "on-secondary-fixed": "#1e1c10",
+                      "primary-container": "#ff85a2",
+                      "on-surface": "#201a19",
+                      "outline": "#887175",
+                      "secondary": "#625f4f",
+                      "on-secondary": "#ffffff",
+                      "inverse-surface": "#352f2d",
+                      "on-background": "#201a19",
+                      "surface-variant": "#ebe0dd",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#fff8f6",
+                      "surface-container-highest": "#ebe0dd",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#fdf1ee",
+                      "surface": "#fff8f6",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#812240",
+                      "outline-variant": "#dbc0c4",
+                      "secondary-fixed-dim": "#ccc6b4",
+                      "inverse-primary": "#ffb1c1",
+                      "on-tertiary-fixed": "#2b1611",
+                      "surface-container": "#f7ebe9",
+                      "tertiary": "#755750",
+                      "on-secondary-container": "#666353",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "tertiary-container": "#c8a39b",
+                      "secondary-container": "#e5e0cc",
+                      "primary": "#a03a57",
+                      "surface-dim": "#e3d8d5",
+                      "surface-container-high": "#f1e6e3",
+                      "on-tertiary-fixed-variant": "#5c403a",
+                      "secondary-fixed": "#e8e2cf",
+                      "primary-fixed": "#ffd9df",
+                      "inverse-on-surface": "#faeeeb",
+                      "surface-tint": "#a03a57"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "20px",
+                      "gutter": "24px",
+                      "container-max": "1280px",
+                      "unit": "8px",
+                      "margin-desktop": "64px"
+              },
+              "fontFamily": {
+                      "label-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg": [
+                              "Playfair Display"
+                      ],
+                      "display-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "label-bold": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ]
+              },
+              "fontSize": {
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "48px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-bold": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "56px",
+                              {
+                                      "lineHeight": "64px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .soft-shadow {
+            box-shadow: 0 4px 20px rgba(84, 57, 51, 0.15); /* Chocolate brown tint */
+        }
+        .glass-panel {
+            background-color: rgba(255, 248, 246, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .card-border {
+            border: 1px solid rgba(84, 57, 51, 0.1);
+        }
+        
+        /* Custom scrollbar for options */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: theme('borderRadius.full');
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline');
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col pt-[88px] pb-[80px] md:pb-0">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md shadow-sm transition-transform duration-200" id="top-nav">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim tracking-tight">
+                L'Art du Gâteau
+            </div>
+<nav class="hidden md:flex space-x-8">
+<a class="font-label-bold text-label-bold text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Collections</a>
+<a class="font-label-bold text-label-bold text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Boutique</a>
+<a class="font-label-bold text-label-bold text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-300" href="#">Our Story</a>
+</nav>
+<div class="flex items-center">
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-variant p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">shopping_bag</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-gutter py-8 md:py-12">
+<!-- Left Column: Interactive 3D Preview -->
+<section class="md:col-span-7 flex flex-col">
+<div class="relative w-full aspect-square md:aspect-auto md:flex-grow rounded-2xl bg-surface-container-low soft-shadow overflow-hidden flex items-center justify-center card-border group">
+<!-- Placeholder for 3D Cake Preview -->
+<div class="absolute inset-0 z-0">
+<img alt="Cake Preview" class="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105" data-alt="A highly detailed 3D rendering of a two-tier celebration cake sitting on a modern minimalist pedestal. The cake features a textured white buttercream frosting, adorned with delicate pink macarons and edible gold leaf cascading down the side. The lighting is soft and natural, emphasizing the 'Digital Indulgence' aesthetic with a pristine white and soft pink color palette against a slightly off-white warm background. The overall mood is luxurious, festive, and tactile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVkeF2LhGGEsjpdQy7T5bDykOgJd8b-iH9OKRJcoQeRevNp3ktWR4OA0lEwfplGQNhOg4dh3EzFI3unVLGsItP3-luXYJWzz2he9i8AqSrnh_41Or9nXE_M131iePhX0t0HrYqwNsPC_3bh6ObLzI7PkDYNDEJBhBiKwzXP77t1Altnx4_2U_PXuxg7hDY4m6iweMNfvFy9E0pzyvAu4vKMZcgclE8Sf8_Ral3RmmMZrnYNGXXChxt">
+</div>
+<!-- Inner Glow Overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 rounded-2xl pointer-events-none"></div>
+<!-- Floating Decor Indicators (Mock) -->
+<div class="absolute top-8 right-8 z-20 flex flex-col gap-3">
+<div class="glass-panel px-4 py-2 rounded-full flex items-center gap-2 shadow-sm transform transition-all duration-300 hover:scale-105">
+<span class="w-3 h-3 rounded-full bg-secondary-container border border-outline"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Textured Base</span>
+</div>
+<div class="glass-panel px-4 py-2 rounded-full flex items-center gap-2 shadow-sm transform transition-all duration-300 hover:scale-105 delay-75">
+<span class="w-3 h-3 rounded-full bg-primary-container border border-primary"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Gold Leaf</span>
+</div>
+</div>
+<!-- Step Indicator -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 glass-panel px-6 py-3 rounded-full flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-8 h-2 rounded-full bg-primary transition-all duration-500"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+</div>
+</section>
+<!-- Right Column: Decor Selection -->
+<section class="md:col-span-5 flex flex-col gap-8">
+<header>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Artful Decor</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Step 3: Select your frosting style and finishing touches to create a masterpiece.</p>
+</header>
+<div class="flex-grow flex flex-col gap-10 overflow-y-auto pr-2 pb-4">
+<!-- Frosting Style -->
+<div>
+<h2 class="font-label-bold text-label-bold text-on-surface uppercase tracking-wider mb-4 border-b border-outline-variant pb-2">Frosting Style</h2>
+<div class="grid grid-cols-3 gap-4">
+<!-- Option 1: Smooth -->
+<button class="group flex flex-col items-center gap-3 relative" onclick="selectOption(this, 'frosting')">
+<div class="w-full aspect-square rounded-full border-2 border-transparent bg-surface-container overflow-hidden relative transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-1">
+<img alt="Smooth Frosting" class="w-full h-full object-cover" data-alt="A close-up, highly detailed shot of perfectly smooth, pristine white buttercream frosting on a cake surface. The lighting highlights the flawless, flawless finish, conveying a sense of modern elegance and clean minimalism within a high-end patisserie context. The color palette is strictly cream and off-white." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC76tbPjxqIZu0neAq2Gt1HZLbJKFR4NuNUY9B0nh74VX_0GEDo3PhXKZyw6Xyty-WVYv7sSQrLydMkPqOJJtzwqmGhNUzyWRDiOPXWPUgWvjcZww6z_4x-AQXV_pZBexO4ckXysgYt5sXGSmeD0Tqg4jjBJlmJiIJb15YqZVHk07zR9kns6-UrehnqtvqvmSqCWk8fV8rqPw5SuWDyGGz0xk1KERxdnxrdmq_lEv3NrPpggsmvFN1a">
+<div class="absolute inset-0 bg-primary/0 transition-colors duration-300 group-[.selected]:bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white opacity-0 group-[.selected]:opacity-100 transition-opacity duration-300" style="font-size: 32px;">check_circle</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-[.selected]:text-primary group-[.selected]:font-bold transition-colors">Smooth</span>
+</button>
+<!-- Option 2: Textured (Selected) -->
+<button class="group flex flex-col items-center gap-3 relative selected" onclick="selectOption(this, 'frosting')">
+<div class="w-full aspect-square rounded-full border-2 border-primary bg-surface-container overflow-hidden relative transition-all duration-300 shadow-sm">
+<img alt="Textured Frosting" class="w-full h-full object-cover" data-alt="A close-up macro shot of artisan buttercream frosting applied with a palette knife, creating a rustic yet elegant textured pattern. The lighting creates soft shadows in the grooves, emphasizing the tactile quality. The colors are warm cream and soft beige, evoking a handcrafted, premium bakery feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6yYmlQglNUInay-uuNfrnyluyiXN5EnHyIMWib8vPOiWbtcjWiW5GnyRpDU5nI1CPM6zZIH6UDpc29b8eEelW7fDnA3gqRkGfbLLu5vdncIGJpdqGF0yDaLslJWYxuCJPYjDQKwmWTtMqiIB8AdYWKhBtxRbll8cpNbXyVWYtPxTHHDShp-m9q49vl-u1jt06AAwhjGhWC57jvvl8hn8VRICKW0Oo6UzWNMcSJ8g2i1g0_T9wAErK">
+<div class="absolute inset-0 bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-size: 32px;">check_circle</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">Textured</span>
+</button>
+<!-- Option 3: Semi-Naked -->
+<button class="group flex flex-col items-center gap-3 relative" onclick="selectOption(this, 'frosting')">
+<div class="w-full aspect-square rounded-full border-2 border-transparent bg-surface-container overflow-hidden relative transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-1">
+<img alt="Semi-Naked Frosting" class="w-full h-full object-cover" data-alt="A close-up detailed view of a semi-naked cake side. Layers of light golden sponge cake are visible through a thin, sheer scraping of white buttercream frosting. The style is rustic-chic and organic, photographed with bright, airy lighting to emphasize the natural, unpretentious elegance of the brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt_HIEiuTzQQljd1Y-UWaxMjzOQqnIN6tsjMMNnDSwNTuPp-2Vg5tPuSPw6BqSeWAsIBg4y4oy71kdyz3p-TID9jIDLiY_hCsslq-PUKOM3CsnDQwsyGmuAKrIyIlqz1zlRP-zS0tAhuzbHQdFkxFQ7oRNQv0s57eUexAogkY0l9T4GdOlgkkvgxKEpmFzNfjcLejlSBBgQ7p1pRnF3GwsAAib1jyl8SDFzBM09DNhbsIxF-oP76XP">
+<div class="absolute inset-0 bg-primary/0 transition-colors duration-300 group-[.selected]:bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white opacity-0 group-[.selected]:opacity-100 transition-opacity duration-300" style="font-size: 32px;">check_circle</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-[.selected]:text-primary group-[.selected]:font-bold transition-colors">Semi-Naked</span>
+</button>
+</div>
+</div>
+<!-- Finishing Touches (Multi-Select Bento) -->
+<div>
+<div class="flex justify-between items-end mb-4 border-b border-outline-variant pb-2">
+<h2 class="font-label-bold text-label-bold text-on-surface uppercase tracking-wider">Finishing Touches</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Select up to 3</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Macarons -->
+<button class="relative group rounded-xl overflow-hidden aspect-[4/3] card-border bg-surface-container-highest transition-all duration-300 hover:shadow-md" onclick="toggleMultiSelect(this)">
+<img alt="Macarons" class="w-full h-full object-cover opacity-80 group-[.selected]:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="An overhead view of delicate French macarons in varying shades of soft pastel pink and cream, arranged elegantly on a clean, light surface. The lighting is soft and diffused, highlighting the smooth shells and ruffled 'feet' of the macarons, contributing to a luxurious, tactile digital indulgence aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD47gmfkbtytb0WWSCwaZ2a_GFd2KOG2efIWxL_aN6jK9KKFUnPU6cKKBm_NLSVIaU2q-vkvLEWGRnZuCfP22Yy1M2a6s0IcFCdsNY1r5-Jf8N9ZPtP_bDQYL2VR4RWAxKjYGQV7Kk6FtjFEhDYb3ljiC4rjbmYq5xxiZswJH813m8nP4j3nfgwG8IYV9b_KuwH7-ZsP0wOP3zcal7U6H1dZHgNKeusBAD4k7R6WvkoY8oXBtjK5sS1">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 flex justify-between items-center">
+<span class="font-label-bold text-label-bold text-white">Macarons</span>
+<div class="w-6 h-6 rounded-full border border-white/50 flex items-center justify-center bg-black/20 backdrop-blur-sm group-[.selected]:bg-primary group-[.selected]:border-primary transition-colors">
+<span class="material-symbols-outlined text-white opacity-0 group-[.selected]:opacity-100 text-[16px]">check</span>
+</div>
+</div>
+</button>
+<!-- Gold Leaf (Selected) -->
+<button class="relative group rounded-xl overflow-hidden aspect-[4/3] card-border bg-surface-container-highest transition-all duration-300 shadow-sm border-primary selected" onclick="toggleMultiSelect(this)">
+<img alt="Gold Leaf" class="w-full h-full object-cover opacity-100 scale-105 transition-all duration-500" data-alt="A close-up shot of edible gold leaf flakes scattered delicately on a surface. The gold catches the light brilliantly, creating a shimmering, premium effect against a subtle warm background. The aesthetic is highly luxurious, celebrating craftsmanship and festive indulgence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe9ofQBsu3vfls2cx-rEByJ86UnSib4GMv9M1_hz_gAauCiAXn6Q0s9QXog8oCO6kuf6Isj8GEBrcwqxNQ9jyz8DFxouZvJ7fMmtsaLOrdJ3pD-_1sZbxf-urPuHS7O84VzC4rUXrq8-KloBZHWuC0Ul4if1Vxi_eSxqlMHnSaE5GuWcbxmp6KWvKwtut8IbIPlPu6HlU0gk5URuFeJ-10XbWVcehg-T32afV5zEpZADI4-FjmtvhA">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+<div class="absolute inset-0 border-2 border-primary rounded-xl opacity-100"></div>
+<div class="absolute bottom-3 left-3 right-3 flex justify-between items-center">
+<span class="font-label-bold text-label-bold text-white">Gold Leaf</span>
+<div class="w-6 h-6 rounded-full border border-primary flex items-center justify-center bg-primary transition-colors">
+<span class="material-symbols-outlined text-white text-[16px]">check</span>
+</div>
+</div>
+</button>
+<!-- Fresh Blooms -->
+<button class="relative group rounded-xl overflow-hidden aspect-[4/3] card-border bg-surface-container-highest transition-all duration-300 hover:shadow-md" onclick="toggleMultiSelect(this)">
+<img alt="Fresh Blooms" class="w-full h-full object-cover opacity-80 group-[.selected]:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="A macro shot of soft, romantic fresh blooms, specifically blush pink peonies and white ranunculus, arranged softly. The lighting is ethereal and soft, creating a pillowy depth that aligns perfectly with a premium, organic tactile minimalism aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHT5E3xmeSSPhwrWIG3Md6XACL95jwCDFfvOlt_eJgWsyZ33D8kVM0QF2JYzaSAKZhh682OqpvW4g5mlxi0pDE5yDIy795vCXuVvz298gGmL2-A3oyilu4MfF0VWXt2shTZqB7qtOacFFCDKLPkLpZw2rtjOUmW6Zo-VNHh7GtOf1KAlZ-GQypE9srYwXbq_A3cr4ym_qVFTxoB-BIHlKmRLY0ckx1L0s46xI1YQ4LsX7t0VPlaQnt">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 flex justify-between items-center">
+<span class="font-label-bold text-label-bold text-white">Fresh Blooms</span>
+<div class="w-6 h-6 rounded-full border border-white/50 flex items-center justify-center bg-black/20 backdrop-blur-sm group-[.selected]:bg-primary group-[.selected]:border-primary transition-colors">
+<span class="material-symbols-outlined text-white opacity-0 group-[.selected]:opacity-100 text-[16px]">check</span>
+</div>
+</div>
+</button>
+<!-- Berries -->
+<button class="relative group rounded-xl overflow-hidden aspect-[4/3] card-border bg-surface-container-highest transition-all duration-300 hover:shadow-md" onclick="toggleMultiSelect(this)">
+<img alt="Berries" class="w-full h-full object-cover opacity-80 group-[.selected]:opacity-100 group-hover:scale-105 transition-all duration-500" data-alt="A vibrant, detailed shot of fresh mixed berries including raspberries, blackberries, and tiny strawberries, lightly dusted with powdered sugar. The rich reds and dark purples provide a striking contrast against a soft, light background, capturing a fresh, artisanal bakery feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv9MM1TzOZgG1f7yQ4bj5-YHRRahLagYwyeqMj31yyxm1lz-ftj99KjHrkLxtYp7ByQ-d72qt2MNR_2RL_o-XDWcnm3mAZ85ww6mROvEYRwtcZ9bF8Eg39X-6c9Y3mtC6euEkGbVDYC8lBHtUUDnm4VsLEYU9yhTD2M62mhX9HjYG-6V__cKmO1qx-k2gJgRU6v5tgcs8QXjcISOnJ_Be_CVlaLLLq7hK4milvggFgG5TNTY2l0rv9">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+<div class="absolute bottom-3 left-3 right-3 flex justify-between items-center">
+<span class="font-label-bold text-label-bold text-white">Berries</span>
+<div class="w-6 h-6 rounded-full border border-white/50 flex items-center justify-center bg-black/20 backdrop-blur-sm group-[.selected]:bg-primary group-[.selected]:border-primary transition-colors">
+<span class="material-symbols-outlined text-white opacity-0 group-[.selected]:opacity-100 text-[16px]">check</span>
+</div>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="mt-auto pt-6 border-t border-outline-variant flex justify-between items-center">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Total</span>
+<span class="font-headline-md text-headline-md text-on-surface">₹125.00</span>
+</div>
+<button class="bg-primary text-on-primary font-label-bold text-label-bold px-8 py-4 rounded-full flex items-center gap-2 transform transition-all duration-200 hover:bg-on-primary-container active:scale-95 shadow-md">
+                    Review Order
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-surface/80 dark:bg-surface-dim/80 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:hidden rounded-t-xl backdrop-blur-md">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 hover:bg-secondary-container/50 dark:hover:bg-secondary-fixed-variant/30 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">architecture</span>
+<span class="font-label-sm text-label-sm-mobile md:text-label-sm mt-1">Base</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 hover:bg-secondary-container/50 dark:hover:bg-secondary-fixed-variant/30 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">cake</span>
+<span class="font-label-sm text-label-sm-mobile md:text-label-sm mt-1">Flavor</span>
+</a>
+<!-- Active Tab: Toppings maps to Decor -->
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-on-primary-fixed-variant text-on-primary-container dark:text-primary-fixed rounded-full px-5 py-1 scale-90 transition-all duration-300 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bakery_dining</span>
+<span class="font-label-sm text-label-sm-mobile md:text-label-sm mt-1 font-bold">Toppings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-5 py-1 hover:bg-secondary-container/50 dark:hover:bg-secondary-fixed-variant/30 rounded-full transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_cart_checkout</span>
+<span class="font-label-sm text-label-sm-mobile md:text-label-sm mt-1">Review</span>
+</a>
+</nav>
+<script>
+        // Simple interaction logic for UI demonstration
+        function selectOption(button, group) {
+            // Find all buttons in the same container
+            const container = button.parentElement;
+            const buttons = container.querySelectorAll('button');
+            
+            // Remove selected classes from all
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+                const imgContainer = btn.querySelector('div.border-2');
+                if(imgContainer) {
+                    imgContainer.classList.remove('border-primary', 'shadow-sm');
+                    imgContainer.classList.add('border-transparent');
+                }
+            });
+            
+            // Add selected class to clicked
+            button.classList.add('selected');
+            const activeImgContainer = button.querySelector('div.border-2');
+            if(activeImgContainer) {
+                activeImgContainer.classList.remove('border-transparent');
+                activeImgContainer.classList.add('border-primary', 'shadow-sm');
+            }
+
+            // Simulate updating 3D preview
+            const previewImg = document.querySelector('section.md\\:col-span-7 img');
+            if(previewImg) {
+                previewImg.style.opacity = '0.7';
+                setTimeout(() => { previewImg.style.opacity = '1'; }, 300);
+            }
+        }
+
+        function toggleMultiSelect(button) {
+            button.classList.toggle('selected');
+            const isSelected = button.classList.contains('selected');
+            
+            // Toggle internal styling
+            if(isSelected) {
+                button.classList.add('border-primary', 'shadow-sm');
+            } else {
+                button.classList.remove('border-primary', 'shadow-sm');
+            }
+
+            // Simulate updating 3D preview
+            const previewImg = document.querySelector('section.md\\:col-span-7 img');
+            if(previewImg) {
+                previewImg.style.transform = isSelected ? 'scale(1.02)' : 'scale(1)';
+                setTimeout(() => { previewImg.style.transform = 'scale(1.05)'; }, 200); // return to hover state approx
+            }
+        }
+    </script>
+
+
+</body></html>
