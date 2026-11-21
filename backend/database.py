@@ -46,11 +46,16 @@ def init_db():
             
         Base.metadata.create_all(bind=engine)
         # create_all does not add fields to existing tables; keep this tiny additive
-        # migration for installs that predate password accounts and account-owned orders.
+        # migration for installs that predate account-owned orders and payment tracking.
         inspector = inspect(engine)
         additions = {
             "users": {"password_hash": "VARCHAR(255)"},
-            "orders": {"user_id": "VARCHAR(50)", "delivery_fee": "FLOAT NOT NULL DEFAULT 149"},
+            "orders": {
+                "user_id": "VARCHAR(50)",
+                "delivery_fee": "FLOAT NOT NULL DEFAULT 149",
+                "payment_method": "VARCHAR(20) NOT NULL DEFAULT 'COD'",
+                "payment_status": "VARCHAR(20) NOT NULL DEFAULT 'PENDING'",
+            },
         }
         with engine.begin() as connection:
             for table, columns in additions.items():

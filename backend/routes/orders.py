@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Header, Depends
 from sqlalchemy.orm import Session
 
 from backend.database import get_db
-from backend.db_models import CakeDB, OrderDB, UserDB
+from backend.db_models import CakeDB, CartDB, OrderDB, UserDB
 from backend.routes.auth import get_current_user_from_token
 from backend.models import (
     PriceCalculationRequest, PriceCalculationResponse,
@@ -146,6 +146,8 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db), user=De
         special_instructions=req.special_instructions,
         total_amount=round(total_amount, 2),
         delivery_fee=DELIVERY_FEE_INR,
+        payment_method=req.payment_method,
+        payment_status="PENDING",
         currency="INR",
         status="CONFIRMED",
         created_at=datetime.utcnow().isoformat() + "Z",
@@ -154,6 +156,12 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db), user=De
     )
     
     db.add(order_record)
+
+    # Keep the cart and the resulting order consistent in the same transaction.
+    cart = db.query(CartDB).filter(CartDB.user_id == user.user_id).first()
+    if cart:
+        cart.items = []
+        cart.updated_at = datetime.utcnow().isoformat() + "Z"
 
     # If customer is registered in PostgreSQL, update saved address if empty
     user = db.query(UserDB).filter(UserDB.id == user.user_id).first()
@@ -188,6 +196,8 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db), user=De
         special_instructions=order_record.special_instructions,
         total_amount=order_record.total_amount,
         delivery_fee=order_record.delivery_fee,
+        payment_method=order_record.payment_method,
+        payment_status=order_record.payment_status,
         currency=order_record.currency,
         status=order_record.status,
         created_at=order_record.created_at,
@@ -214,6 +224,8 @@ def get_order(order_id: str, db: Session = Depends(get_db), user=Depends(get_cur
         special_instructions=order.special_instructions,
         total_amount=order.total_amount,
         delivery_fee=order.delivery_fee,
+        payment_method=order.payment_method,
+        payment_status=order.payment_status,
         currency=order.currency,
         status=order.status,
         created_at=order.created_at,

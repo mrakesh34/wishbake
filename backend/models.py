@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, Field, EmailStr
 
 class CustomizerSelection(BaseModel):
@@ -51,6 +51,7 @@ class CreateOrderRequest(BaseModel):
     delivery_time_slot: Optional[str] = Field(default="afternoon", description="morning, afternoon, evening, night")
     recipient_name: Optional[str] = Field(default=None, description="Name of the person receiving the cake")
     special_instructions: Optional[str] = None
+    payment_method: Literal["COD"] = "COD"
     items: List[OrderItem]
 
 class OrderResponse(BaseModel):
@@ -60,6 +61,8 @@ class OrderResponse(BaseModel):
     customer_phone: Optional[str] = None
     total_amount: float
     delivery_fee: float = 149.0
+    payment_method: str = "COD"
+    payment_status: str = "PENDING"
     currency: str = "INR"
     status: str
     created_at: str

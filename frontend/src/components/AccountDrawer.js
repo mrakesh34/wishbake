@@ -239,6 +239,10 @@ export class AccountDrawer {
 
           <div class="bg-white p-3 rounded-xl border border-outline-variant/40 text-[11px] space-y-1">
             <div class="flex justify-between text-on-surface-variant">
+              <span>Payment:</span>
+              <span class="font-medium text-on-surface">${order.payment_method === 'COD' ? 'Cash on Delivery' : order.payment_method} · ${order.payment_status || 'PENDING'}</span>
+            </div>
+            <div class="flex justify-between text-on-surface-variant">
               <span>Delivery Slot:</span>
               <span class="font-medium text-on-surface capitalize">${order.delivery_date} (${order.delivery_time_slot || 'Standard'})</span>
             </div>
@@ -248,7 +252,7 @@ export class AccountDrawer {
           </div>
 
           <div class="flex justify-between items-center pt-1 border-t border-outline-variant/40 text-xs">
-            <span class="font-bold text-on-surface">Total Paid:</span>
+            <span class="font-bold text-on-surface">Order Total:</span>
             <span class="font-display font-bold text-base text-primary">₹${order.total_amount.toLocaleString()}</span>
           </div>
         </div>

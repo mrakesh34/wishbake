@@ -127,5 +127,6 @@ def get_user_orders(user: UserProfile = Depends(require_auth), db: Session = Dep
     return [OrderResponse(order_id=o.order_id, customer_name=o.customer_name, customer_email=o.customer_email,
         customer_phone=o.customer_phone, delivery_address=o.delivery_address, delivery_date=o.delivery_date,
         delivery_time_slot=o.delivery_time_slot, recipient_name=o.recipient_name, special_instructions=o.special_instructions,
-        total_amount=o.total_amount, delivery_fee=o.delivery_fee, currency="INR", status=o.status,
+        total_amount=o.total_amount, delivery_fee=o.delivery_fee, payment_method=o.payment_method,
+        payment_status=o.payment_status, currency="INR", status=o.status,
         created_at=o.created_at, items=o.items or []) for o in orders]

@@ -46,6 +46,8 @@ class OrderDB(Base):
     special_instructions = Column(Text, nullable=True)
     total_amount = Column(Float, nullable=False)
     delivery_fee = Column(Float, nullable=False, default=149.0)
+    payment_method = Column(String(20), nullable=False, default="COD")
+    payment_status = Column(String(20), nullable=False, default="PENDING")
     currency = Column(String(10), default="INR")
     status = Column(String(50), default="CONFIRMED")
     created_at = Column(String(50), default=lambda: datetime.utcnow().isoformat() + "Z")

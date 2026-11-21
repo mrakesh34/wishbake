@@ -29,7 +29,8 @@ The API is at `http://127.0.0.1:8000`; API docs are at `/docs`; Vite is at `http
 - User profiles, saved addresses, carts, and orders are database-backed. Signed-in carts sync to the account. Guest checkout remains available, but guest carts are not synced across devices.
 - Neon/PostgreSQL is required through `backend/.env` → `DATABASE_URL`. The app fails startup if it is missing or if the database is unavailable; it must not use SQLite.
 - Prices and order currency are INR. The current catalog/options values are retained as rupee amounts; local-market price validation is a later task. The launch delivery area is Bhubaneswar, Odisha; address validation is deferred.
-- Payment gateway is undecided (Razorpay or Cashfree). Orders currently do not collect payment.
+- Cash on Delivery is the available checkout method and is saved with `payment_status=PENDING`. Online Payment is selectable in the UI but displays “Coming soon”; the API rejects online orders until a gateway is chosen and implemented.
+- Online gateway choice remains undecided (Razorpay or Cashfree).
 - No admin/staff portal in this phase.
 
 ## API overview

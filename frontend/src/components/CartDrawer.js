@@ -25,6 +25,8 @@ export class CartDrawer {
     const checkoutModal = document.getElementById('checkout-modal');
     const closeCheckoutModal = document.getElementById('close-checkout-modal');
     const checkoutForm = document.getElementById('checkout-form');
+    const onlinePaymentOption = document.getElementById('online-payment-option');
+    const onlinePaymentMessage = document.getElementById('online-payment-message');
     const successModal = document.getElementById('order-success-modal');
     const closeSuccessBtn = document.getElementById('close-success-btn');
 
@@ -67,6 +69,12 @@ export class CartDrawer {
 
     if (checkoutForm) {
       checkoutForm.addEventListener('submit', (e) => this.handleCheckoutSubmit(e));
+    }
+
+    if (onlinePaymentOption && onlinePaymentMessage) {
+      onlinePaymentOption.addEventListener('click', () => {
+        onlinePaymentMessage.classList.remove('hidden');
+      });
     }
 
     if (closeSuccessBtn) {
@@ -236,6 +244,10 @@ export class CartDrawer {
     if (orderTotalEl) orderTotalEl.textContent = this.formatINR(finalTotal);
 
     const dateInput = document.getElementById('cust-date');
+    const codOption = document.querySelector('input[name="payment_method"][value="COD"]');
+    const onlineMessage = document.getElementById('online-payment-message');
+    if (codOption) codOption.checked = true;
+    if (onlineMessage) onlineMessage.classList.add('hidden');
     if (dateInput) {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -341,6 +353,7 @@ export class CartDrawer {
       delivery_time_slot: document.getElementById('cust-timeslot')?.value || 'afternoon',
       recipient_name: document.getElementById('cust-recipient')?.value || null,
       special_instructions: document.getElementById('cust-instructions').value,
+      payment_method: document.querySelector('input[name="payment_method"]:checked')?.value || 'COD',
       items: this.cart
     };
 
@@ -389,7 +402,7 @@ export class CartDrawer {
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Confirm & Place Order</span><span class="material-symbols-outlined">check_circle</span>`;
+        submitBtn.innerHTML = `<span>Place COD Order</span><span class="material-symbols-outlined">check_circle</span>`;
       }
     }
   }
