@@ -6,9 +6,8 @@ export class SingleCakeDetail {
     this.cakeId = cakeId;
     this.onAddToCart = onAddToCartCallback;
     this.onCustomizeSimilar = onCustomizeSimilarCallback;
-
     this.cake = null;
-    this.selectedPortion = 1; // multiplier
+    this.selectedPortion = 1;
     this.selectedSize = '1lb';
     this.init();
   }
@@ -16,35 +15,26 @@ export class SingleCakeDetail {
   async init() {
     this.renderSkeleton();
     await this.fetchCakeDetail();
-    if (this.cake) {
-      this.render();
-    } else {
-      this.renderError();
-    }
+    if (this.cake) this.render();
+    else this.renderError();
   }
 
   async fetchCakeDetail() {
     try {
-      const res = await fetch(apiUrl(`/api/cakes/${this.cakeId}`));
-      const data = await res.json();
-      if (data.status === 'success') {
-        this.cake = data.data;
-      }
-    } catch (e) {
-      console.warn('Error fetching cake details from API', e);
+      const response = await fetch(apiUrl(`/api/cakes/${this.cakeId}`));
+      const data = await response.json();
+      if (data.status === 'success') this.cake = data.data;
+    } catch (error) {
+      console.warn('Error fetching cake details from API', error);
     }
   }
 
   renderSkeleton() {
     this.container.innerHTML = `
-      <section class="max-w-6xl mx-auto px-6 py-12">
-        <div class="animate-pulse grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <div class="h-96 bg-surface-container rounded-3xl"></div>
-          <div class="space-y-4">
-            <div class="h-8 bg-surface-container rounded-full w-2/3"></div>
-            <div class="h-4 bg-surface-container rounded-full w-1/3"></div>
-            <div class="h-24 bg-surface-container rounded-2xl"></div>
-          </div>
+      <section class="wb-detail">
+        <div class="wb-page-width wb-detail__skeleton">
+          <div class="wb-product-skeleton"></div>
+          <div><div class="wb-shop__skeleton-heading"></div><div class="wb-shop__skeleton-heading"></div></div>
         </div>
       </section>
     `;
@@ -52,123 +42,85 @@ export class SingleCakeDetail {
 
   renderError() {
     this.container.innerHTML = `
-      <section class="max-w-4xl mx-auto px-6 py-16 text-center">
-        <span class="material-symbols-outlined text-primary text-5xl mb-2">error</span>
-        <h2 class="font-display text-2xl font-bold text-on-surface">Cake Not Found</h2>
-        <p class="text-xs text-on-surface-variant mt-2">The creation you are looking for is unavailable.</p>
-        <a href="#shop" class="mt-6 inline-block bg-primary text-white text-xs font-bold px-6 py-3 rounded-full">Back to Shop</a>
+      <section class="wb-detail wb-detail--empty">
+        <div class="wb-page-width wb-shop__empty" role="status">
+          <span class="material-symbols-outlined" aria-hidden="true">cake</span>
+          <h1>This cake isn’t available right now.</h1>
+          <p>Take a look at the rest of the collection.</p>
+          <a href="#shop" class="wb-button wb-button--primary">Back to the collection</a>
+        </div>
       </section>
     `;
   }
 
   render() {
-    const computedPrice = this.cake.price * (this.selectedSize === '3lb' ? 1.5 : (this.selectedSize === '0.5lb' ? 0.6 : 1.0)) * this.selectedPortion;
+    const sizeOptions = [
+      { id: '0.5lb', label: '½ lb', servings: '2–4 servings' },
+      { id: '1lb', label: '1 lb', servings: '6–8 servings' },
+      { id: '3lb', label: '3 lb', servings: '16–22 servings' }
+    ];
+    const sizeMultiplier = this.selectedSize === '3lb' ? 1.5 : (this.selectedSize === '0.5lb' ? 0.6 : 1.0);
+    const computedPrice = this.cake.price * sizeMultiplier * this.selectedPortion;
 
     this.container.innerHTML = `
-      <section class="max-w-6xl mx-auto px-6 py-10">
-        
-        <!-- Breadcrumbs -->
-        <div class="flex items-center gap-2 text-xs text-on-surface-variant mb-6">
-          <a href="#home" class="hover:text-primary">Home</a>
-          <span>/</span>
-          <a href="#shop" class="hover:text-primary">Shop Creations</a>
-          <span>/</span>
-          <span class="text-on-surface font-bold">${this.cake.title}</span>
-        </div>
+      <section class="wb-detail" aria-labelledby="detail-title">
+        <div class="wb-page-width">
+          <nav class="wb-detail__breadcrumb" aria-label="Breadcrumb">
+            <a href="#home">Home</a><span aria-hidden="true">/</span>
+            <a href="#shop">The collection</a><span aria-hidden="true">/</span>
+            <span aria-current="page">${this.cake.title}</span>
+          </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          
-          <!-- Left Column: Large Image Gallery (7 cols) -->
-          <div class="lg:col-span-7 bg-white p-4 rounded-3xl shadow-xl border border-outline-variant/40 relative">
-            <div class="relative h-[480px] rounded-2xl overflow-hidden bg-surface-container-low">
-              <img id="main-cake-img" src="${this.cake.image}" alt="${this.cake.title}" class="w-full h-full object-cover" />
-              
-              ${this.cake.badge ? `
-                <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-primary text-xs font-bold px-4 py-1.5 rounded-full shadow-sm border border-primary/20">
-                  ${this.cake.badge}
-                </span>
-              ` : ''}
-            </div>
+          <div class="wb-detail__layout">
+            <figure class="wb-detail__gallery">
+              <img id="main-cake-img" src="${this.cake.image}" alt="${this.cake.title}" fetchpriority="high" decoding="async" />
+              ${this.cake.badge ? `<figcaption class="wb-product-card__badge">${this.cake.badge}</figcaption>` : ''}
+              <div class="wb-detail__image-caption"><span>WISHBAKE · THE COLLECTION</span><strong>Made for the table.</strong></div>
+            </figure>
 
-            <!-- Thumbnail Badges -->
-            <div class="grid grid-cols-3 gap-3 mt-4">
-              <div class="bg-surface-container p-3 rounded-2xl text-center border border-outline-variant/30">
-                <span class="material-symbols-outlined text-primary text-xl">groups</span>
-                <span class="text-xs text-on-surface-variant block font-medium mt-1">Serves ${this.cake.servings}</span>
+            <div class="wb-detail__order-panel">
+              <p class="wb-eyebrow">${this.cake.category}</p>
+              <h1 id="detail-title">${this.cake.title}</h1>
+              <div class="wb-detail__rating"><span aria-hidden="true">★</span><strong>${this.cake.rating}</strong><span>(${this.cake.reviews} reviews)</span></div>
+              <p class="wb-detail__description">${this.cake.description}</p>
+
+              <div class="wb-detail__fact-row">
+                <div><span>Portion guide</span><strong>Serves ${this.cake.servings}</strong></div>
+                <div><span>Prepared</span><strong>To order</strong></div>
               </div>
-              <div class="bg-surface-container p-3 rounded-2xl text-center border border-outline-variant/30">
-                <span class="material-symbols-outlined text-amber-500 text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
-                <span class="text-xs text-on-surface-variant block font-medium mt-1">${this.cake.rating} / 5.0 (${this.cake.reviews})</span>
+
+              <div class="wb-detail__choice-block">
+                <div class="wb-detail__label-row"><span class="wb-detail__label">Choose a size</span><span class="wb-detail__label-note">Portion guide varies by cake</span></div>
+                <div class="wb-detail__sizes">
+                  ${sizeOptions.map(size => `
+                    <button type="button" data-size="${size.id}" aria-pressed="${this.selectedSize === size.id}" class="wb-detail__size ${this.selectedSize === size.id ? 'is-selected' : ''}">
+                      <strong>${size.label}</strong><span>${size.servings}</span>
+                    </button>
+                  `).join('')}
+                </div>
               </div>
-              <div class="bg-surface-container p-3 rounded-2xl text-center border border-outline-variant/30">
-                <span class="material-symbols-outlined text-green-600 text-xl">eco</span>
-                <span class="text-xs text-on-surface-variant block font-medium mt-1">100% Artisanal</span>
+
+              <div class="wb-detail__quantity-row">
+                <span class="wb-detail__label">Quantity</span>
+                <div class="wb-quantity" aria-label="Quantity">
+                  <button type="button" id="detail-qty-dec" aria-label="Decrease quantity" ${this.selectedPortion === 1 ? 'disabled' : ''}>−</button>
+                  <span id="detail-qty-val" aria-live="polite">${this.selectedPortion}</span>
+                  <button type="button" id="detail-qty-inc" aria-label="Increase quantity">+</button>
+                </div>
               </div>
+
+              <div class="wb-detail__price-row">
+                <div><span>Price for this selection</span><strong id="detail-calculated-price">₹${Math.round(computedPrice).toLocaleString('en-IN')}</strong></div>
+                <span class="wb-detail__delivery-note"><span class="material-symbols-outlined" aria-hidden="true">ac_unit</span> Chilled delivery</span>
+              </div>
+
+              <div class="wb-detail__actions">
+                <button id="detail-add-cart-btn" class="wb-button wb-button--primary" type="button"><span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>Add to bag</button>
+                <button id="detail-customize-3d-btn" class="wb-button wb-button--outline" type="button"><span class="material-symbols-outlined" aria-hidden="true">view_in_ar</span>Customise in 3D</button>
+              </div>
+              <p class="wb-detail__footnote">For custom designs, use the cake studio to choose flavours, tiers, and finishing details.</p>
             </div>
           </div>
-
-          <!-- Right Column: Interactive Details & Order Options (5 cols) -->
-          <div class="lg:col-span-5 bg-white p-6 rounded-3xl shadow-xl border border-outline-variant/40 space-y-6">
-            
-            <div>
-              <span class="text-xs font-bold text-primary uppercase tracking-wider">${this.cake.category}</span>
-              <h1 class="font-display font-bold text-3xl text-on-surface mt-1">${this.cake.title}</h1>
-              <p class="text-xs text-on-surface-variant leading-relaxed mt-3">${this.cake.description}</p>
-            </div>
-
-            <!-- Size Selector -->
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-2">Select Cake Size</label>
-              <div class="grid grid-cols-3 gap-2">
-                ${[{id: '0.5lb', label: '½ lb', desc: '2-4 Servings'}, {id: '1lb', label: '1 lb', desc: '6-8 Servings'}, {id: '3lb', label: '3 lb', desc: '16-22 Servings'}].map(sz => `
-                  <button type="button" data-size="${sz.id}" class="detail-size-btn p-3 rounded-2xl border text-center transition-all ${this.selectedSize === sz.id ? 'border-primary bg-primary/10 text-primary font-bold shadow-xs' : 'border-outline-variant text-on-surface hover:bg-surface-container'}">
-                    <div class="text-sm font-bold">${sz.label}</div>
-                    <div class="text-[10px] text-on-surface-variant">${sz.desc}</div>
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- Quantity Selector -->
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-2">Quantity</label>
-              <div class="flex items-center gap-4 bg-surface-container w-max px-4 py-2 rounded-full border border-outline-variant">
-                <button id="detail-qty-dec" class="font-bold text-lg text-on-surface hover:text-primary">-</button>
-                <span id="detail-qty-val" class="font-bold text-base px-2">${this.selectedPortion}</span>
-                <button id="detail-qty-inc" class="font-bold text-lg text-on-surface hover:text-primary">+</button>
-              </div>
-            </div>
-
-            <!-- Ingredients & Storage Note -->
-            <div class="bg-surface-container p-4 rounded-2xl border border-outline-variant/40 space-y-2 text-xs">
-              <div class="font-bold text-on-surface flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-primary text-base">restaurant</span>
-                <span>Craft Ingredients</span>
-              </div>
-              <p class="text-on-surface-variant">Kashmiri saffron, Valrhona dark chocolate ganache, French butter, organic rose petals, and 24k edible gold leaf.</p>
-            </div>
-
-            <!-- Price & Actions Bar -->
-            <div class="pt-4 border-t border-outline-variant/40 space-y-3">
-              <div class="flex justify-between items-baseline">
-                <span class="text-xs text-on-surface-variant">Calculated Total</span>
-                <span id="detail-calculated-price" class="font-display font-bold text-3xl text-primary">₹${Math.round(computedPrice).toLocaleString('en-IN')}</span>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button id="detail-customize-3d-btn" class="py-3.5 px-4 rounded-full border border-primary text-primary font-bold text-xs hover:bg-primary/10 transition-colors flex items-center justify-center gap-2">
-                  <span class="material-symbols-outlined text-base">view_in_ar</span>
-                  <span>Customize in 3D</span>
-                </button>
-                <button id="detail-add-cart-btn" class="bg-primary text-white py-3.5 px-4 rounded-full font-bold text-xs shadow-md hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
-                  <span class="material-symbols-outlined text-base">shopping_bag</span>
-                  <span>Add to Order Bag</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-
         </div>
       </section>
     `;
@@ -177,57 +129,38 @@ export class SingleCakeDetail {
   }
 
   attachEvents() {
-    // Size selection
-    this.container.querySelectorAll('.detail-size-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        this.selectedSize = e.currentTarget.dataset.size;
+    this.container.querySelectorAll('.wb-detail__size').forEach(button => {
+      button.addEventListener('click', event => {
+        this.selectedSize = event.currentTarget.dataset.size;
         this.render();
       });
     });
 
-    // Quantity selectors
-    const decBtn = this.container.querySelector('#detail-qty-dec');
-    const incBtn = this.container.querySelector('#detail-qty-inc');
-
-    if (decBtn) {
-      decBtn.addEventListener('click', () => {
-        if (this.selectedPortion > 1) {
-          this.selectedPortion--;
-          this.render();
-        }
-      });
-    }
-
-    if (incBtn) {
-      incBtn.addEventListener('click', () => {
-        this.selectedPortion++;
+    this.container.querySelector('#detail-qty-dec')?.addEventListener('click', () => {
+      if (this.selectedPortion > 1) {
+        this.selectedPortion--;
         this.render();
-      });
-    }
+      }
+    });
+    this.container.querySelector('#detail-qty-inc')?.addEventListener('click', () => {
+      this.selectedPortion++;
+      this.render();
+    });
 
-    // Customize similar in 3D
-    const cust3dBtn = this.container.querySelector('#detail-customize-3d-btn');
-    if (cust3dBtn) {
-      cust3dBtn.addEventListener('click', () => {
-        if (this.onCustomizeSimilar) this.onCustomizeSimilar(this.cake);
-      });
-    }
-
-    // Add to cart
-    const addCartBtn = this.container.querySelector('#detail-add-cart-btn');
-    if (addCartBtn) {
-      addCartBtn.addEventListener('click', () => {
-        const computedPrice = this.cake.price * (this.selectedSize === '3lb' ? 1.5 : (this.selectedSize === '0.5lb' ? 0.6 : 1.0));
-        if (this.onAddToCart) {
-          this.onAddToCart({
-            item_type: 'preset',
-            cake_id: this.cake.id,
-            title: `${this.cake.title} (${this.selectedSize})`,
-            quantity: this.selectedPortion,
-            unit_price: computedPrice
-          });
-        }
-      });
-    }
+    this.container.querySelector('#detail-customize-3d-btn')?.addEventListener('click', () => {
+      if (this.onCustomizeSimilar) this.onCustomizeSimilar(this.cake);
+    });
+    this.container.querySelector('#detail-add-cart-btn')?.addEventListener('click', () => {
+      const sizeMultiplier = this.selectedSize === '3lb' ? 1.5 : (this.selectedSize === '0.5lb' ? 0.6 : 1.0);
+      if (this.onAddToCart) {
+        this.onAddToCart({
+          item_type: 'preset',
+          cake_id: this.cake.id,
+          title: `${this.cake.title} (${this.selectedSize})`,
+          quantity: this.selectedPortion,
+          unit_price: this.cake.price * sizeMultiplier
+        });
+      }
+    });
   }
 }

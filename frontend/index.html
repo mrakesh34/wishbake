@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WISHBAKE - 3D Custom Cake Studio</title>
+  <meta name="description" content="Thoughtfully crafted celebration cakes and a live 3D cake design studio from WISHBAKE." />
+  <meta name="theme-color" content="#f7f2e9" />
+  <title>WISHBAKE — Cakes made for your moments</title>
   
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CDN -->
@@ -19,30 +21,30 @@
       theme: {
         extend: {
           colors: {
-            'surface': '#fff8f6',
-            'surface-dim': '#e3d8d5',
-            'surface-tint': '#a03a57',
-            'primary': '#a03a57',
-            'primary-container': '#ff85a2',
+            'surface': '#f7f2e9',
+            'surface-dim': '#e8dfd6',
+            'surface-tint': '#70243b',
+            'primary': '#70243b',
+            'primary-container': '#ead8db',
             'on-primary': '#ffffff',
-            'on-primary-container': '#771a38',
-            'secondary': '#625f4f',
-            'secondary-container': '#e5e0cc',
-            'tertiary': '#755750',
-            'tertiary-container': '#c8a39b',
-            'on-surface': '#201a19',
-            'on-surface-variant': '#554245',
-            'outline': '#887175',
-            'outline-variant': '#dbc0c4',
+            'on-primary-container': '#4d1b2b',
+            'secondary': '#80664d',
+            'secondary-container': '#eee5d8',
+            'tertiary': '#9b7548',
+            'tertiary-container': '#ead8ca',
+            'on-surface': '#332c2a',
+            'on-surface-variant': '#756c66',
+            'outline': '#84786e',
+            'outline-variant': '#e1d9cd',
             'surface-container-lowest': '#ffffff',
-            'surface-container-low': '#fdf1ee',
-            'surface-container': '#f7ebe9',
-            'surface-container-high': '#f1e6e3',
-            'surface-container-highest': '#ebe0dd'
+            'surface-container-low': '#fcf9f3',
+            'surface-container': '#f0e9de',
+            'surface-container-high': '#eae2d7',
+            'surface-container-highest': '#e2d8cc'
           },
           fontFamily: {
-            display: ['Playfair Display', 'serif'],
-            body: ['Plus Jakarta Sans', 'sans-serif']
+            display: ['Cormorant Garamond', 'Georgia', 'serif'],
+            body: ['DM Sans', 'Arial', 'sans-serif']
           }
         }
       }
@@ -51,88 +53,84 @@
 
   <link rel="stylesheet" href="/src/style.css" />
 </head>
-<body class="font-body text-on-surface bg-surface min-h-screen flex flex-col antialiased">
+<body class="wb-app-body font-body text-on-surface bg-surface min-h-screen flex flex-col antialiased">
   
   <!-- Scroll Progress Bar -->
   <div id="scroll-progress-bar" style="width: 0%"></div>
 
   <!-- Navigation Bar -->
-  <header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md shadow-sm border-b border-outline-variant/30 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-      <a href="#home" class="nav-brand font-display text-2xl font-bold text-primary flex items-center gap-2">
-        <span class="material-symbols-outlined text-3xl">cake</span>
-        <span>WISHBAKE</span>
+  <header class="wb-header">
+    <div class="wb-header__inner">
+      <a href="#home" class="wb-brand" aria-label="WISHBAKE home">
+        <span class="wb-brand__mark" aria-hidden="true">W</span>
+        <span class="wb-brand__wordmark">
+          <span>WISHBAKE</span>
+          <small>BAKERY & CAKE STUDIO</small>
+        </span>
       </a>
 
-      <nav class="hidden lg:flex items-center gap-7 font-medium text-sm">
-        <a href="#home" class="nav-link text-primary hover:text-primary transition-colors border-b-2 border-primary pb-1" data-page="home">Home</a>
-        <a href="#shop" class="nav-link text-on-surface-variant hover:text-primary transition-colors" data-page="shop">Shop Creations</a>
-        <a href="#customizer" class="nav-link text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" data-page="customizer">
-          <span>3D Customizer</span>
-          <span class="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">Studio</span>
-        </a>
-        <a href="#about" class="nav-link text-on-surface-variant hover:text-primary transition-colors" data-page="about">Our Story</a>
+      <nav id="primary-navigation" class="wb-nav" aria-label="Primary navigation" data-open="false">
+        <a href="#home" class="nav-link wb-nav__link" data-page="home" aria-current="page">Home</a>
+        <a href="#shop" class="nav-link wb-nav__link" data-page="shop">The collection</a>
+        <a href="#customizer" class="nav-link wb-nav__link" data-page="customizer">Cake studio</a>
+        <a href="#about" class="nav-link wb-nav__link" data-page="about">Our story</a>
       </nav>
 
-      <div class="flex items-center gap-3">
-        <button id="header-account-btn" class="flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3.5 py-2 rounded-full transition-all" aria-label="Account">
-          <span class="material-symbols-outlined text-lg">person</span>
-          <span id="header-account-label">Sign In</span>
+      <div class="wb-header__actions">
+        <button id="header-account-btn" class="wb-account-button" aria-label="Account" type="button">
+          <span class="material-symbols-outlined" aria-hidden="true">person_outline</span>
+          <span id="header-account-label">Sign in</span>
         </button>
 
-        <button id="open-cart-btn" class="relative p-2.5 rounded-full text-primary hover:bg-primary-container/20 transition-all duration-200" aria-label="Cart">
-          <span class="material-symbols-outlined text-2xl">shopping_bag</span>
-          <span id="cart-badge-count" class="absolute -top-1 -right-1 bg-primary text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold scale-0 transition-transform">0</span>
+        <button id="open-cart-btn" class="wb-cart-button" aria-label="Open shopping bag" type="button">
+          <span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
+          <span>Bag</span>
+          <span id="cart-badge-count" class="wb-cart-badge scale-0">0</span>
         </button>
 
-        <button id="mobile-menu-btn" class="lg:hidden p-2 text-primary hover:bg-primary-container/20 rounded-lg">
-          <span class="material-symbols-outlined text-2xl">menu</span>
+        <button id="mobile-menu-btn" class="wb-menu-button" aria-label="Open navigation menu" aria-controls="primary-navigation" aria-expanded="false" type="button">
+          <span class="material-symbols-outlined" aria-hidden="true">menu</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- Main View Container -->
-  <main id="app-content" class="flex-grow pt-20">
+  <main id="app-content" class="wb-app-main flex-grow pt-20">
     <!-- Dynamic page views mount here -->
   </main>
 
   <!-- Footer -->
-  <footer class="bg-surface-container-highest border-t border-outline-variant/40 mt-20 text-on-surface-variant py-12 px-6">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-      <div>
-        <h3 class="font-display text-xl font-bold text-primary mb-4 flex items-center gap-2">
-          <span class="material-symbols-outlined">cake</span> WISHBAKE
-        </h3>
-        <p class="text-sm leading-relaxed mb-4">Digital Indulgence & Haute Confectionery. Custom 3D centerpiece cakes designed by you, crafted fresh by our master pastry chefs.</p>
-      </div>
-      <div>
-        <h4 class="font-bold text-on-surface mb-3">Explore</h4>
-        <ul class="space-y-2 text-sm">
-          <li><a href="#customizer" class="hover:text-primary transition-colors">3D Customizer Studio</a></li>
-          <li><a href="#shop" class="hover:text-primary transition-colors">Signature Confections</a></li>
-          <li><a href="#about" class="hover:text-primary transition-colors">Our Brand Heritage</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="font-bold text-on-surface mb-3">Customer Care</h4>
-        <ul class="space-y-2 text-sm">
-          <li><span class="material-symbols-outlined text-xs align-middle mr-1">schedule</span> Mon - Sat: 8:00 AM - 8:00 PM</li>
-          <li><span class="material-symbols-outlined text-xs align-middle mr-1">local_shipping</span> Chilled Hand Delivery</li>
-          <li><span class="material-symbols-outlined text-xs align-middle mr-1">verified</span> 100% Freshness Guarantee</li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="font-bold text-on-surface mb-3">Boutique Concierge</h4>
-        <p class="text-xs mb-3">Questions about bespoke wedding or corporate centerpiece orders?</p>
-        <a href="mailto:concierge@wishbake.com" class="inline-flex items-center gap-1.5 bg-primary text-white text-xs px-4 py-2 rounded-full font-bold hover:bg-primary/90 transition-colors">
-          <span class="material-symbols-outlined text-xs">mail</span>
-          <span>Contact Concierge</span>
+  <footer class="wb-footer">
+    <div class="wb-footer__main">
+      <div class="wb-footer__brand-block">
+        <a href="#home" class="wb-brand wb-brand--footer" aria-label="WISHBAKE home">
+          <span class="wb-brand__mark" aria-hidden="true">W</span>
+          <span class="wb-brand__wordmark"><span>WISHBAKE</span><small>BAKERY & CAKE STUDIO</small></span>
         </a>
+        <p>Celebration cakes with a little more thought in every detail. Designed with you, finished by hand, and made to be shared.</p>
+      </div>
+      <div class="wb-footer__column">
+        <h2>Explore</h2>
+        <a href="#customizer">Design a cake</a>
+        <a href="#shop">The collection</a>
+        <a href="#about">Our story</a>
+      </div>
+      <div class="wb-footer__column">
+        <h2>From our kitchen</h2>
+        <span>Mon–Sat · 8:00 AM–8:00 PM</span>
+        <span>Chilled hand delivery</span>
+        <span>Baked for your occasion</span>
+      </div>
+      <div class="wb-footer__column wb-footer__contact">
+        <h2>Need a hand?</h2>
+        <p>For bespoke celebration orders, our team is happy to help.</p>
+        <a class="wb-footer__contact-link" href="mailto:concierge@wishbake.com">Write to the bakery <span aria-hidden="true">↗</span></a>
       </div>
     </div>
-    <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-outline-variant/30 text-center text-xs">
-      <p>© 2026 WISHBAKE. All rights reserved. Crafting bespoke luxury centerpieces.</p>
+    <div class="wb-footer__bottom">
+      <span>© 2026 WISHBAKE. All rights reserved.</span>
+      <span>Made for the moments around the table.</span>
     </div>
   </footer>
 
@@ -276,7 +274,7 @@
           <p id="online-payment-message" role="status" aria-live="polite" class="hidden rounded-xl bg-amber-50 p-3 text-xs text-amber-900">Online payment is coming soon. Please choose Cash on Delivery to place your order.</p>
         </fieldset>
 
-        <div class="bg-surface-container p-4 rounded-2xl border border-outline-variant/40 flex justify-between items-center text-sm mt-4">
+        <div class="wb-checkout-total bg-surface-container p-4 rounded-2xl border border-outline-variant/40 flex justify-between items-center text-sm mt-4">
           <span>Order Total (Inc. Delivery):</span>
           <span id="modal-order-total" class="font-display font-bold text-xl text-primary">₹0</span>
         </div>

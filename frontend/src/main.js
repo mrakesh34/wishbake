@@ -42,27 +42,42 @@ class App {
 
     this.setupHeaderAuth();
 
+    this.setupMobileNav();
     window.addEventListener('hashchange', () => this.routePage());
     this.routePage();
+  }
 
-    const mobileBtn = document.getElementById('mobile-menu-btn');
-    if (mobileBtn) {
-      mobileBtn.addEventListener('click', () => {
-        const nav = document.querySelector('header nav');
-        if (nav) {
-          nav.classList.toggle('hidden');
-          nav.classList.toggle('flex');
-          nav.classList.toggle('flex-col');
-          nav.classList.toggle('absolute');
-          nav.classList.toggle('top-20');
-          nav.classList.toggle('left-0');
-          nav.classList.toggle('w-full');
-          nav.classList.toggle('bg-white');
-          nav.classList.toggle('p-6');
-          nav.classList.toggle('shadow-xl');
-        }
-      });
-    }
+  setupMobileNav() {
+    this.mobileMenuButton = document.getElementById('mobile-menu-btn');
+    this.mobileNav = document.getElementById('primary-navigation');
+    if (!this.mobileMenuButton || !this.mobileNav) return;
+
+    this.mobileMenuButton.addEventListener('click', () => {
+      const isOpen = this.mobileMenuButton.getAttribute('aria-expanded') === 'true';
+      this.setMobileNavOpen(!isOpen);
+    });
+
+    this.mobileNav.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => this.setMobileNavOpen(false));
+    });
+
+    this._mobileNavKeyHandler = event => {
+      if (event.key === 'Escape') this.setMobileNavOpen(false);
+    };
+    this._mobileNavResizeHandler = () => {
+      if (window.matchMedia('(min-width: 64rem)').matches) this.setMobileNavOpen(false);
+    };
+    document.addEventListener('keydown', this._mobileNavKeyHandler);
+    window.addEventListener('resize', this._mobileNavResizeHandler, { passive: true });
+  }
+
+  setMobileNavOpen(isOpen) {
+    if (!this.mobileMenuButton || !this.mobileNav) return;
+    this.mobileNav.dataset.open = String(isOpen);
+    this.mobileMenuButton.setAttribute('aria-expanded', String(isOpen));
+    this.mobileMenuButton.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+    const icon = this.mobileMenuButton.querySelector('.material-symbols-outlined');
+    if (icon) icon.textContent = isOpen ? 'close' : 'menu';
   }
 
   setupHeaderAuth() {
@@ -103,22 +118,23 @@ class App {
       const initial = (user.name ? user.name.charAt(0) : user.email.charAt(0)).toUpperCase();
       const displayName = user.name ? user.name.split(' ')[0] : user.email.split('@')[0];
       
-      accountBtn.className = 'flex items-center gap-2 text-xs font-bold text-on-surface bg-surface-container hover:bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/60 transition-all shadow-xs';
+      accountBtn.className = 'wb-account-button';
       accountBtn.innerHTML = `
-        <div class="w-6 h-6 rounded-full bg-primary text-white text-[11px] font-bold flex items-center justify-center shadow-xs">${initial}</div>
-        <span id="header-account-label" class="max-w-[80px] truncate">${displayName}</span>
-        <span class="material-symbols-outlined text-xs text-outline">expand_more</span>
+        <span class="wb-account-button__avatar" aria-hidden="true">${initial}</span>
+        <span id="header-account-label">${displayName}</span>
+        <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
       `;
     } else {
-      accountBtn.className = 'flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3.5 py-2 rounded-full transition-all';
+      accountBtn.className = 'wb-account-button';
       accountBtn.innerHTML = `
-        <span class="material-symbols-outlined text-lg">person</span>
+        <span class="material-symbols-outlined" aria-hidden="true">person_outline</span>
         <span id="header-account-label">Sign In</span>
       `;
     }
   }
 
   routePage() {
+    this.setMobileNavOpen(false);
     const rawHash = window.location.hash.replace('#', '') || 'home';
     const [path, queryString] = rawHash.split('?');
 
@@ -128,11 +144,9 @@ class App {
     // Update active nav links
     document.querySelectorAll('.nav-link').forEach(link => {
       if (link.dataset.page === path) {
-        link.classList.add('text-primary', 'font-bold', 'border-b-2', 'border-primary', 'pb-1');
-        link.classList.remove('text-on-surface-variant');
+        link.setAttribute('aria-current', 'page');
       } else {
-        link.classList.remove('text-primary', 'font-bold', 'border-b-2', 'border-primary', 'pb-1');
-        link.classList.add('text-on-surface-variant');
+        link.removeAttribute('aria-current');
       }
     });
 

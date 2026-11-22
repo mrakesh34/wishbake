@@ -275,103 +275,68 @@ export class CustomizerStudio {
   renderLayout() {
     const stepLabels = ['Foundation', 'Flavors', 'Decoration', 'Delivery', 'Review'];
     this.container.innerHTML = `
-      <section class="max-w-7xl mx-auto px-6 py-8">
-        <!-- Header Title -->
-        <div class="text-center max-w-2xl mx-auto mb-8">
-          <span class="bg-primary/10 text-primary text-xs uppercase font-bold tracking-widest px-4 py-1.5 rounded-full inline-flex items-center gap-1.5 mb-3">
-            <span class="material-symbols-outlined text-sm">view_in_ar</span>
-            Interactive 3D Studio
-          </span>
-          <h1 class="font-display text-4xl font-bold text-on-surface">3D Custom Cake Studio</h1>
-          <p class="text-on-surface-variant text-sm mt-2">Design your bespoke centerpieces in real-time 3D. Choose tier layers, artisanal flavor infusions, and luxury toppings.</p>
-        </div>
+      <section class="wb-customizer">
+        <header class="wb-customizer__intro wb-page-width">
+          <p class="wb-eyebrow">Made for your moment</p>
+          <div class="wb-customizer__intro-row">
+            <div>
+              <h1>Build a cake<br><em>worth gathering for.</em></h1>
+              <p>Choose the details, watch your design take shape, and we'll bake it fresh in our kitchen.</p>
+            </div>
+            <span class="wb-customizer__studio-note"><span class="material-symbols-outlined">view_in_ar</span> The cake studio <i>01 &mdash; 05</i></span>
+          </div>
+        </header>
 
-        <!-- Step Navigation Tabs -->
-        <div class="grid grid-cols-5 gap-2 sm:gap-3 max-w-3xl mx-auto mb-8 bg-surface-container p-1.5 rounded-2xl border border-outline-variant/40">
+        <nav class="wb-customizer__steps wb-page-width" aria-label="Cake design steps">
           ${stepLabels.map((label, i) => {
             const stepNum = i + 1;
             return `
-            <button type="button" data-step-nav="${stepNum}" class="step-nav-tab py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 ${this.currentStep === stepNum ? 'bg-primary text-white shadow-sm' : 'text-on-surface-variant hover:text-primary hover:bg-white/50'}">
-              <span class="w-5 h-5 rounded-full ${this.currentStep === stepNum ? 'bg-white text-primary' : 'bg-outline-variant/50 text-on-surface'} flex items-center justify-center text-[10px]">${stepNum}</span>
-              <span class="hidden sm:inline">${label}</span>
+            <button type="button" data-step-nav="${stepNum}" class="step-nav-tab ${this.currentStep === stepNum ? 'is-current' : ''}" aria-current="${this.currentStep === stepNum ? 'step' : 'false'}">
+              <span>${String(stepNum).padStart(2, '0')}</span>
+              <span>${label}</span>
             </button>`;
           }).join('')}
-        </div>
+        </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <!-- 3D Canvas Column -->
-          <div class="lg:col-span-7 bg-white rounded-3xl p-6 shadow-xl border border-outline-variant/40 relative">
-            <div id="cake-canvas-wrapper" class="three-canvas-container h-[460px] min-h-[460px] w-full relative rounded-2xl overflow-hidden">
-              <div class="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm text-xs font-bold text-primary flex items-center gap-1.5 border border-primary/20 pointer-events-none">
-                <span class="material-symbols-outlined text-base">view_in_ar</span>
-                <span>Live 3D WebGL Engine</span>
-              </div>
-
-              <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-white/90 backdrop-blur-sm px-5 py-1.5 rounded-full shadow-md text-xs font-medium text-on-surface-variant flex items-center gap-2 border border-outline-variant pointer-events-none">
-                <span class="material-symbols-outlined text-primary text-base">360</span>
-                <span>Drag to rotate 360°</span>
+        <div class="wb-customizer__workspace wb-page-width">
+          <section class="wb-customizer__preview" aria-label="Live cake preview">
+            <div class="wb-customizer__preview-head"><span><i></i> Your design, in progress</span><span>Interactive preview</span></div>
+            <div class="wb-customizer__canvas-frame">
+              <div id="cake-canvas-wrapper" class="three-canvas-container wb-customizer__canvas"></div>
+              <div class="wb-customizer__rotate-hint"><span class="material-symbols-outlined">360</span> Drag to turn your cake</div>
+            </div>
+            <div class="wb-customizer__presets">
+              <div><span class="wb-customizer__caption">A little inspiration</span><p>Begin with a considered palette.</p></div>
+              <div class="wb-customizer__preset-list">
+                <button type="button" data-theme="diwali" class="quick-theme-btn"><i class="wb-swatch wb-swatch--gold"></i> Festive gold</button>
+                <button type="button" data-theme="rose" class="quick-theme-btn"><i class="wb-swatch wb-swatch--rose"></i> Rose garden</button>
+                <button type="button" data-theme="modern" class="quick-theme-btn"><i class="wb-swatch wb-swatch--cocoa"></i> Modern cocoa</button>
+                <button type="button" data-theme="wedding" class="quick-theme-btn"><i class="wb-swatch wb-swatch--ivory"></i> Wedding ivory</button>
               </div>
             </div>
+          </section>
 
-            <!-- Quick Theme Presets -->
-            <div class="mt-6 pt-4 border-t border-outline-variant/30 flex flex-wrap items-center justify-between gap-3">
-              <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Preset Themes:</span>
-              <div class="flex flex-wrap gap-2">
-                <button type="button" data-theme="diwali" class="quick-theme-btn text-xs px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-800 font-bold hover:bg-amber-100 transition-colors border border-amber-200/60 shadow-2xs">✨ Diwali Gold</button>
-                <button type="button" data-theme="rose" class="quick-theme-btn text-xs px-3.5 py-1.5 rounded-full bg-pink-50 text-pink-800 font-bold hover:bg-pink-100 transition-colors border border-pink-200/60 shadow-2xs">🌸 Rose Royale</button>
-                <button type="button" data-theme="modern" class="quick-theme-btn text-xs px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface font-bold hover:bg-surface-container-high transition-colors border border-outline-variant/60 shadow-2xs">⬛ Modern Hex</button>
-                <button type="button" data-theme="wedding" class="quick-theme-btn text-xs px-3.5 py-1.5 rounded-full bg-red-50 text-red-800 font-bold hover:bg-red-100 transition-colors border border-red-200/60 shadow-2xs">💍 Wedding Grand</button>
-              </div>
+          <section class="wb-customizer__panel" aria-label="Cake configuration">
+            <div class="wb-customizer__panel-head">
+              <div><span class="wb-customizer__caption">Design your cake</span><h2><span id="step-number-badge">${this.currentStep}</span><span id="step-title-text">Step 1: Foundation</span></h2></div>
+              <div id="step-dots-container" aria-hidden="true">${[1,2,3,4,5].map(i => `<span class="${this.currentStep >= i ? 'is-done' : ''}"></span>`).join('')}</div>
             </div>
-          </div>
-
-          <!-- Configuration Controls Column -->
-          <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-xl border border-outline-variant/40 flex flex-col justify-between min-h-[560px]">
-            <div>
-              <div class="flex items-center justify-between pb-4 border-b border-outline-variant/40 mb-6">
-                <div class="flex items-center gap-2">
-                  <span class="w-8 h-8 rounded-full bg-primary text-white font-bold flex items-center justify-center text-sm" id="step-number-badge">${this.currentStep}</span>
-                  <h3 class="font-display font-bold text-lg text-on-surface" id="step-title-text">Step 1: Foundation</h3>
-                </div>
-                <div class="flex gap-1.5" id="step-dots-container">
-                  ${[1,2,3,4,5].map(i => `<span class="w-2.5 h-2.5 rounded-full ${this.currentStep >= i ? 'bg-primary' : 'bg-outline-variant'}"></span>`).join('')}
-                </div>
+            <div id="step-controls-content" class="wb-customizer__controls">${this.getStepHtml(this.currentStep)}</div>
+            <footer class="wb-customizer__summary">
+              <div class="wb-customizer__price-line">
+                <div><span class="wb-customizer__caption">Your cake, estimated</span><strong id="customizer-total-price">&#8377;${this.pricing.total_price.toLocaleString('en-IN')}</strong></div>
+                <span id="customizer-servings-badge">${this.pricing.weight_lbs} lbs (~${this.pricing.weight_kg} kg) &bull; ${this.pricing.estimated_servings} servings</span>
               </div>
-
-              <!-- Dynamic Step Controls Container -->
-              <div id="step-controls-content" class="overflow-y-auto max-h-[400px] pr-1">
-                ${this.getStepHtml(this.currentStep)}
+              <div class="wb-customizer__actions">
+                <button type="button" id="prev-step-btn" class="wb-button wb-button--outline" ${this.currentStep === 1 ? 'disabled' : ''}>Back</button>
+                <button type="button" id="next-step-btn" class="wb-button wb-button--primary"><span id="next-btn-label">${this.currentStep === this.totalSteps ? 'Add Custom Cake to Cart' : 'Continue'}</span><span id="next-btn-icon" class="material-symbols-outlined">${this.currentStep === this.totalSteps ? 'shopping_bag' : 'arrow_forward'}</span></button>
               </div>
-            </div>
-
-            <!-- Footer: Pricing and Next/Back buttons -->
-            <div class="pt-6 border-t border-outline-variant/40 mt-6">
-              <div class="flex items-center justify-between mb-4">
-                <div>
-                  <span class="text-xs text-on-surface-variant block">Calculated Total</span>
-                  <span id="customizer-total-price" class="font-display text-3xl font-bold text-primary">₹${this.pricing.total_price.toLocaleString('en-IN')}</span>
-                </div>
-                <span id="customizer-servings-badge" class="text-xs font-bold bg-surface-container px-3 py-1.5 rounded-full text-secondary">
-                  ${this.pricing.weight_lbs} lbs (~${this.pricing.weight_kg} kg) • ${this.pricing.estimated_servings} servings
-                </span>
-              </div>
-
-              <div class="flex gap-3">
-                <button type="button" id="prev-step-btn" class="px-5 py-3 rounded-full border border-outline-variant text-on-surface-variant font-bold text-sm hover:bg-surface-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed" ${this.currentStep === 1 ? 'disabled' : ''}>
-                  Back
-                </button>
-                <button type="button" id="next-step-btn" class="flex-grow bg-primary text-white py-3 px-6 rounded-full font-bold text-sm shadow-md hover:bg-primary/90 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                  <span id="next-btn-label">${this.currentStep === this.totalSteps ? 'Add Custom Cake to Cart' : 'Next Step'}</span>
-                  <span id="next-btn-icon" class="material-symbols-outlined text-base">${this.currentStep === this.totalSteps ? 'shopping_bag' : 'arrow_forward'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
+            </footer>
+          </section>
         </div>
       </section>
     `;
   }
-
   getStepHtml(step) {
     if (!this.optionsData) return '<p class="text-sm text-on-surface-variant">Loading options...</p>';
 
@@ -785,20 +750,19 @@ export class CustomizerStudio {
     // Update Step Navigation Tabs
     this.container.querySelectorAll('.step-nav-tab').forEach(tab => {
       const stepNum = parseInt(tab.dataset.stepNav);
-      const pill = tab.querySelector('span:first-child');
       if (stepNum === this.currentStep) {
-        tab.className = 'step-nav-tab py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 bg-primary text-white shadow-sm';
-        if (pill) pill.className = 'w-5 h-5 rounded-full bg-white text-primary flex items-center justify-center text-[10px]';
+        tab.classList.add('is-current');
+        tab.setAttribute('aria-current', 'step');
       } else {
-        tab.className = 'step-nav-tab py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 text-on-surface-variant hover:text-primary hover:bg-white/50';
-        if (pill) pill.className = 'w-5 h-5 rounded-full bg-outline-variant/50 text-on-surface flex items-center justify-center text-[10px]';
+        tab.classList.remove('is-current');
+        tab.setAttribute('aria-current', 'false');
       }
     });
 
     // Update Header Step Dots
     if (dotsContainer) {
       dotsContainer.innerHTML = [1,2,3,4,5].map(i =>
-        `<span class="w-2.5 h-2.5 rounded-full ${this.currentStep >= i ? 'bg-primary' : 'bg-outline-variant'}"></span>`
+        `<span class="${this.currentStep >= i ? 'is-done' : ''}"></span>`
       ).join('');
     }
 

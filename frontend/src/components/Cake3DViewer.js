@@ -29,7 +29,7 @@ export class Cake3DViewer {
 
     // Scene creation
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xfff8f6);
+    this.scene.background = new THREE.Color(0xf7f2e9);
 
     // Camera setup
     this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
