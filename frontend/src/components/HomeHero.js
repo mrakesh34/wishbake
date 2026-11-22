@@ -19,9 +19,9 @@ export class HomeHero {
         <section class="wb-home-hero" aria-labelledby="home-hero-title">
           <div class="wb-home-hero__inner">
             <div class="wb-home-hero__copy">
-              <p class="wb-eyebrow" data-motion-in>Bespoke cake studio · Bhubaneswar</p>
-              <h1 id="home-hero-title" data-motion-in>A centrepiece<br />with <em>your name</em><br />on it.</h1>
-              <p class="wb-home-hero__lede" data-motion-in>Choose a cake from our collection or sketch out your own in the WISHBAKE cake studio. We’ll bake it fresh and finish it by hand.</p>
+              <p class="wb-eyebrow" data-motion-in>Thoughtful cakes · Bhubaneswar</p>
+              <h1 id="home-hero-title" data-motion-in>A little joy,<br /><em>made to share.</em></h1>
+              <p class="wb-home-hero__lede" data-motion-in>For the candles, the catch-ups, and the days worth remembering. Choose a hand-finished favourite or create a cake that feels like yours.</p>
 
               <div class="wb-home-hero__actions" data-motion-in>
                 <button id="hero-customizer-btn" class="wb-button wb-button--primary" type="button">
@@ -40,7 +40,7 @@ export class HomeHero {
 
             <figure class="wb-home-hero__visual" data-motion-in>
               <div class="wb-home-hero__photo-frame">
-                <img src="/assets/images/rasmalai_royale_angle.jpg" alt="Hand-finished celebration cake decorated with marigold flowers" fetchpriority="high" decoding="async" />
+                <img src="/assets/images/rasmalai_royale_angle.jpg" alt="A hand-finished WISHBAKE celebration cake with saffron and rose" fetchpriority="high" decoding="async" />
               </div>
               <span class="wb-home-hero__photo-index" aria-hidden="true">01</span>
               <figcaption class="wb-home-hero__photo-note">

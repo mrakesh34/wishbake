@@ -9,6 +9,7 @@ export class CustomizerStudio {
 
     this.currentStep = 1;
     this.totalSteps = 5;
+    this.priceRequestId = 0;
 
     // Synchronous default options so UI never waits or blocks
     this.optionsData = {
@@ -131,6 +132,7 @@ export class CustomizerStudio {
   async init() {
     // 1. Immediately render layout with default options so everything is interactive instantly
     this.renderLayout();
+    this.updatePreviewDetails();
     
     // 2. Mount Three.js Viewer
     const canvasContainer = this.container.querySelector('#cake-canvas-wrapper');
@@ -138,7 +140,7 @@ export class CustomizerStudio {
       this.viewer = new Cake3DViewer(canvasContainer);
       requestAnimationFrame(() => {
         if (this.viewer) {
-          this.viewer.updateCake(this.selection);
+          this.viewer.updateCake(this.selection, this.optionsData);
         }
       });
     }
@@ -161,6 +163,8 @@ export class CustomizerStudio {
         if (data.status === 'success' && data.data) {
           this.optionsData = data.data;
           this.renderStepContent();
+          this.updatePreviewDetails();
+          if (this.viewer) this.viewer.updateCake(this.selection, this.optionsData);
         }
       }
     } catch (e) {
@@ -222,6 +226,7 @@ export class CustomizerStudio {
 
   async computePrice() {
     // 1. Calculate local fallback immediately so UI is always responsive
+    const requestId = ++this.priceRequestId;
     this.pricing = this.computeLocalPrice();
     this.updatePriceDisplay();
 
@@ -234,8 +239,10 @@ export class CustomizerStudio {
       });
       if (res.ok) {
         const data = await res.json();
-        this.pricing = data;
-        this.updatePriceDisplay();
+        if (requestId === this.priceRequestId) {
+          this.pricing = data;
+          this.updatePriceDisplay();
+        }
       }
     } catch (e) {
       // Local pricing already applied
@@ -273,17 +280,17 @@ export class CustomizerStudio {
   }
 
   renderLayout() {
-    const stepLabels = ['Foundation', 'Flavors', 'Decoration', 'Delivery', 'Review'];
+    const stepLabels = ['Build', 'Flavour', 'Decorate', 'Delivery', 'Review'];
     this.container.innerHTML = `
       <section class="wb-customizer">
         <header class="wb-customizer__intro wb-page-width">
-          <p class="wb-eyebrow">Made for your moment</p>
+          <p class="wb-eyebrow">The WISHBAKE cake studio</p>
           <div class="wb-customizer__intro-row">
             <div>
-              <h1>Build a cake<br><em>worth gathering for.</em></h1>
-              <p>Choose the details, watch your design take shape, and we'll bake it fresh in our kitchen.</p>
+              <h1>Make it <em>your moment.</em></h1>
+              <p>Shape a cake that feels like yours. Your choices update the live preview as you go.</p>
             </div>
-            <span class="wb-customizer__studio-note"><span class="material-symbols-outlined">view_in_ar</span> The cake studio <i>01 &mdash; 05</i></span>
+            <span class="wb-customizer__studio-note"><span class="material-symbols-outlined">view_in_ar</span> Live cake preview <i>5 simple steps</i></span>
           </div>
         </header>
 
@@ -300,10 +307,14 @@ export class CustomizerStudio {
 
         <div class="wb-customizer__workspace wb-page-width">
           <section class="wb-customizer__preview" aria-label="Live cake preview">
-            <div class="wb-customizer__preview-head"><span><i></i> Your design, in progress</span><span>Interactive preview</span></div>
+            <div class="wb-customizer__preview-head"><span><i></i> Your cake, taking shape</span><span><span class="material-symbols-outlined" aria-hidden="true">360</span> Live 3D preview</span></div>
             <div class="wb-customizer__canvas-frame">
               <div id="cake-canvas-wrapper" class="three-canvas-container wb-customizer__canvas"></div>
               <div class="wb-customizer__rotate-hint"><span class="material-symbols-outlined">360</span> Drag to turn your cake</div>
+            </div>
+            <div class="wb-customizer__live-info" aria-live="polite">
+              <div><span class="material-symbols-outlined" aria-hidden="true">cake</span><div><strong id="live-cake-name">Your cake design</strong><span id="live-cake-flavours"></span></div></div>
+              <span id="live-cake-toppings">Personalised as you go</span>
             </div>
             <div class="wb-customizer__presets">
               <div><span class="wb-customizer__caption">A little inspiration</span><p>Begin with a considered palette.</p></div>
@@ -318,8 +329,8 @@ export class CustomizerStudio {
 
           <section class="wb-customizer__panel" aria-label="Cake configuration">
             <div class="wb-customizer__panel-head">
-              <div><span class="wb-customizer__caption">Design your cake</span><h2><span id="step-number-badge">${this.currentStep}</span><span id="step-title-text">Step 1: Foundation</span></h2></div>
-              <div id="step-dots-container" aria-hidden="true">${[1,2,3,4,5].map(i => `<span class="${this.currentStep >= i ? 'is-done' : ''}"></span>`).join('')}</div>
+              <div><span class="wb-customizer__caption">Step <span id="step-number-badge">${this.currentStep}</span> of ${this.totalSteps}</span><h2><span id="step-title-text">Foundation</span></h2></div>
+              <div id="step-dots-container" aria-hidden="true">${[1,2,3,4,5].map(i => `<span class="${i === this.currentStep ? 'is-current' : i < this.currentStep ? 'is-done' : ''}"></span>`).join('')}</div>
             </div>
             <div id="step-controls-content" class="wb-customizer__controls">${this.getStepHtml(this.currentStep)}</div>
             <footer class="wb-customizer__summary">
@@ -665,11 +676,12 @@ export class CustomizerStudio {
       if (e.target.id === 'inscription-input') {
         this.selection.inscription = e.target.value;
         this.computePrice();
-        if (this.viewer) this.viewer.updateCake(this.selection);
+        this.updatePreviewDetails();
+        if (this.viewer) this.viewer.updateCake(this.selection, this.optionsData);
       }
       if (e.target.id === 'custom-color-input') {
         this.selection.icing_color = e.target.value;
-        this.updateUiAnd3D();
+        if (this.viewer) this.viewer.updateCake(this.selection, this.optionsData);
       }
       if (e.target.id === 'delivery-recipient-input') {
         this.deliveryDetails.recipient_name = e.target.value;
@@ -720,9 +732,10 @@ export class CustomizerStudio {
 
   updateUiAnd3D() {
     this.renderStepContent();
+    this.updatePreviewDetails();
     this.computePrice();
     if (this.viewer) {
-      this.viewer.updateCake(this.selection);
+      this.viewer.updateCake(this.selection, this.optionsData);
     }
   }
 
@@ -735,13 +748,7 @@ export class CustomizerStudio {
     const nextBtnIcon = this.container.querySelector('#next-btn-icon');
     const dotsContainer = this.container.querySelector('#step-dots-container');
 
-    const titles = [
-      'Step 1: Foundation',
-      'Step 2: Flavors & Fillings',
-      'Step 3: Decoration & Styling',
-      'Step 4: Delivery Details',
-      'Step 5: Review & Order'
-    ];
+    const titles = ['Foundation', 'Flavours & fillings', 'Decoration', 'Delivery', 'Review & order'];
 
     if (contentBox) contentBox.innerHTML = this.getStepHtml(this.currentStep);
     if (numberBadge) numberBadge.textContent = this.currentStep;
@@ -750,6 +757,7 @@ export class CustomizerStudio {
     // Update Step Navigation Tabs
     this.container.querySelectorAll('.step-nav-tab').forEach(tab => {
       const stepNum = parseInt(tab.dataset.stepNav);
+      tab.classList.toggle('is-done', stepNum < this.currentStep);
       if (stepNum === this.currentStep) {
         tab.classList.add('is-current');
         tab.setAttribute('aria-current', 'step');
@@ -762,7 +770,7 @@ export class CustomizerStudio {
     // Update Header Step Dots
     if (dotsContainer) {
       dotsContainer.innerHTML = [1,2,3,4,5].map(i =>
-        `<span class="${this.currentStep >= i ? 'is-done' : ''}"></span>`
+        `<span class="${i === this.currentStep ? 'is-current' : i < this.currentStep ? 'is-done' : ''}"></span>`
       ).join('');
     }
 
@@ -777,6 +785,28 @@ export class CustomizerStudio {
     if (this.currentStep === this.totalSteps) {
       this.updatePriceDisplay();
     }
+    this.updatePreviewDetails();
+  }
+
+  updatePreviewDetails() {
+    const nameEl = this.container.querySelector('#live-cake-name');
+    const flavoursEl = this.container.querySelector('#live-cake-flavours');
+    const toppingsEl = this.container.querySelector('#live-cake-toppings');
+    if (!nameEl || !flavoursEl || !toppingsEl) return;
+
+    const shape = this.optionsData.shapes.find(option => option.id === this.selection.shape);
+    const sponge = this.optionsData.sponge_flavors.find(option => option.id === this.selection.sponge_flavor);
+    const filling = this.optionsData.filling_flavors.find(option => option.id === this.selection.filling_flavor);
+    const toppings = this.optionsData.toppings
+      .filter(option => this.selection.toppings.includes(option.id))
+      .map(option => option.name);
+
+    nameEl.textContent = `${this.selection.tiers} tier${this.selection.tiers > 1 ? 's' : ''} · ${shape?.name || this.selection.shape}`;
+    flavoursEl.textContent = `${sponge?.name || this.selection.sponge_flavor} sponge · ${filling?.name || this.selection.filling_flavor} filling`;
+    const finish = toppings.length ? `Finishing touches · ${toppings.join(', ')}` : 'No extra toppings selected';
+    toppingsEl.textContent = this.selection.inscription?.trim()
+      ? `${finish} · Message: “${this.selection.inscription.trim()}”`
+      : finish;
   }
 
   destroy() {
