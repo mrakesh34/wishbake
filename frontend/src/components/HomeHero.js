@@ -1,29 +1,65 @@
-import { animate } from 'motion';
-import { Cake3DViewer } from './Cake3DViewer.js';
-import { apiUrl } from '../services/api.js';
+import { escapeHtml, formatINR } from '../utils/ui.js';
+import { renderMinimalTermsSection } from './TermsSection.js';
+
+const FEATURED_FLAGSHIPS = [
+  {
+    id: 'cake-rasmalai-royale',
+    category: 'Weddings & Galas',
+    title: 'Rasmalai Royale 3-Tier Grandeur',
+    badge: 'Showstopper',
+    rating: 4.9,
+    servings: '35-45',
+    price: 8999,
+    image: '/assets/images/rasmalai_royale_angle.jpg',
+    description: 'Three-tier rasmalai-infused sponge with saffron cream layers, hand-piped royal icing, edible gold leaf cascades, and roasted dry fruit garnish.'
+  },
+  {
+    id: 'cake-saffron-rose-grand',
+    category: 'Weddings & Galas',
+    title: 'Imperial Saffron Rose 2-Tier Grandeur',
+    badge: 'Royal Reserve',
+    rating: 5.0,
+    servings: '24-32',
+    price: 6499,
+    image: '/assets/images/saffron_rose_front.jpg',
+    description: 'Magnificent palace banquet spectacle layered with damask rosewater, Kashmiri saffron mousse, diamond silver vark, and hand-piped royal filigree.'
+  },
+  {
+    id: 'cake-choco-hazelnut',
+    category: 'Anniversary',
+    title: 'Belgian Dark Chocolate Hazelnut Truffle',
+    badge: 'Signature',
+    rating: 4.9,
+    servings: '10-12',
+    price: 1999,
+    image: '/assets/images/choco_hazelnut_front.jpg',
+    description: '70% Callebaut dark chocolate sponge with roasted Turkish hazelnut gianduja cream, glossy ganache drip, and gold-dusted chocolate shards.'
+  }
+];
 
 export class HomeHero {
   constructor(containerElement, onStartCustomizingCallback, onExploreCollectionCallback) {
     this.container = containerElement;
     this.onStartCustomizing = onStartCustomizingCallback;
     this.onExploreCollection = onExploreCollectionCallback;
-    this.viewer = null;
-    this.motionControls = [];
     this.isDestroyed = false;
+    this._clickHandler = null;
     this.render();
   }
 
   render() {
+    this.detachEvents();
+
     this.container.innerHTML = `
       <div class="wb-home">
         <section class="wb-home-hero" aria-labelledby="home-hero-title">
           <div class="wb-home-hero__inner">
             <div class="wb-home-hero__copy">
-              <p class="wb-eyebrow" data-motion-in>Thoughtful cakes · Bhubaneswar</p>
-              <h1 id="home-hero-title" data-motion-in>A little joy,<br /><em>made to share.</em></h1>
-              <p class="wb-home-hero__lede" data-motion-in>For the candles, the catch-ups, and the days worth remembering. Choose a hand-finished favourite or create a cake that feels like yours.</p>
+              <p class="wb-eyebrow">Couture cakes · Bhubaneswar</p>
+              <h1 id="home-hero-title">A little joy,<br /><em>made to share.</em></h1>
+              <p class="wb-home-hero__lede">For grand celebrations, milestone tables, and days worth remembering. Choose a hand-finished flagship creation or craft your own bespoke tiered cake in our 3D studio.</p>
 
-              <div class="wb-home-hero__actions" data-motion-in>
+              <div class="wb-home-hero__actions">
                 <button id="hero-customizer-btn" class="wb-button wb-button--primary" type="button">
                   <span>Design your cake</span>
                   <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
@@ -31,31 +67,31 @@ export class HomeHero {
                 <button id="hero-explore-btn" class="wb-button wb-button--outline" type="button">See the collection</button>
               </div>
 
-              <div class="wb-home-hero__notes" data-motion-in>
+              <div class="wb-home-hero__notes">
                 <div><span class="material-symbols-outlined" aria-hidden="true">bakery_dining</span><span>Baked to order<br />in Bhubaneswar</span></div>
                 <span class="wb-home-hero__notes-divider" aria-hidden="true"></span>
                 <div><span class="material-symbols-outlined" aria-hidden="true">local_shipping</span><span>Chilled, careful<br />hand delivery</span></div>
               </div>
             </div>
 
-            <figure class="wb-home-hero__visual" data-motion-in>
+            <figure class="wb-home-hero__visual">
               <div class="wb-home-hero__photo-frame">
-                <img src="/assets/images/rasmalai_royale_angle.jpg" alt="A hand-finished WISHBAKE celebration cake with saffron and rose" fetchpriority="high" decoding="async" />
+                <img src="/assets/images/hero_couture_cake.jpg" alt="Four-tier ivory celebration cake adorned with crimson garden roses, 24K gold leaf, and macarons on an antique brass pedestal" fetchpriority="high" decoding="async" />
               </div>
               <span class="wb-home-hero__photo-index" aria-hidden="true">01</span>
               <figcaption class="wb-home-hero__photo-note">
-                <small>From the WISHBAKE kitchen</small>
-                <strong>Finished by hand,<br />made to be shared.</strong>
+                <small>Couture Edition · 4 Tiers</small>
+                <strong>Finished by hand,<br />made for the occasion.</strong>
               </figcaption>
             </figure>
           </div>
         </section>
 
-        <section class="wb-proof-strip" aria-label="How we make WISHBAKE cakes">
+        <section class="wb-proof-strip" aria-label="How we craft WISHBAKE cakes">
           <div class="wb-proof-strip__inner">
-            <div class="wb-proof-stat"><strong>01</strong><span>Made to order for your date</span></div>
-            <div class="wb-proof-stat"><strong>02</strong><span>Finished by hand in our kitchen</span></div>
-            <div class="wb-proof-stat"><strong>03</strong><span>Personalise it in the cake studio</span></div>
+            <div class="wb-proof-stat"><strong>01</strong><span>Freshly baked for your celebration date</span></div>
+            <div class="wb-proof-stat"><strong>02</strong><span>Hand-piped filigree, florals, and 24K gold accents</span></div>
+            <div class="wb-proof-stat"><strong>03</strong><span>Custom 1 to 5-tier builds in the live 3D studio</span></div>
           </div>
         </section>
 
@@ -63,41 +99,43 @@ export class HomeHero {
           <div class="wb-featured__inner">
             <div class="wb-section__heading wb-section__heading--split">
               <div>
-                <p class="wb-eyebrow">A few from the counter</p>
+                <p class="wb-eyebrow">Flagship creations</p>
                 <h2 id="featured-title">Made here.<br /><em>Remembered there.</em></h2>
-                <p>Signature cakes for birthdays, big tables, and the days you simply want cake.</p>
+                <p>High-craft multi-tier centerpieces and signature flavours prepared fresh for Bhubaneswar tables.</p>
               </div>
               <button id="hero-view-all-btn" class="wb-text-link" type="button">Browse the collection <span aria-hidden="true">↗</span></button>
             </div>
-            <div id="featured-cakes-grid" class="wb-product-grid" aria-live="polite" aria-busy="true"></div>
+            <div id="featured-cakes-grid" class="wb-product-grid">
+              ${FEATURED_FLAGSHIPS.map(cake => this.renderCakeCard(cake)).join('')}
+            </div>
           </div>
         </section>
 
         <section class="wb-design-callout" aria-labelledby="design-callout-title">
           <div class="wb-design-callout__copy">
-            <p class="wb-eyebrow">A preview of your design</p>
-            <h2 id="design-callout-title">Try a few ideas on for size.</h2>
-            <p>Change the shape, layers, colours, and finish in the 3D studio. You’ll see the price update as you make your choices.</p>
+            <p class="wb-eyebrow">Interactive 3D Cake Studio</p>
+            <h2 id="design-callout-title">Preview every tier, flavour, and detail.</h2>
+            <p>Customise up to five tiers and 15 pounds—choosing sponge, cream filling, frosting texture, toppings, brass toppers, plaque text colour, and party add-ons with instant pricing.</p>
             <button id="hero-cta-customizer-btn" class="wb-button wb-button--light" type="button">Open the cake studio <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
           </div>
-          <div class="wb-design-callout__visual" aria-label="Interactive 3D cake preview">
-            <div id="hero-3d-viewer" class="three-canvas-container" role="img" aria-label="Rotating 3D preview of a custom WISHBAKE cake"></div>
-            <p class="wb-design-callout__hint"><span class="material-symbols-outlined" aria-hidden="true">360</span>Drag to turn the cake</p>
+          <div class="wb-design-callout__visual">
+            <img src="/assets/images/saffron_rose_front.jpg" alt="Imperial 3-tier silver vark celebration cake crafted at WISHBAKE" loading="lazy" decoding="async" />
+            <p class="wb-design-callout__hint"><span class="material-symbols-outlined" aria-hidden="true">view_in_ar</span>Live 3D configurator · 1 to 5 tiers</p>
           </div>
         </section>
 
-        <section class="wb-brand-story" aria-labelledby="brand-story-title">
+        <section class="wb-brand-story" aria-labelledby="brand-about-title">
           <div class="wb-brand-story__inner">
-            <div class="wb-brand-story__image-wrap" data-motion-in>
-              <img src="/assets/images/kesar_pista_angle.jpg" alt="A slice of saffron and pistachio cake" loading="lazy" decoding="async" />
-              <span class="wb-brand-story__image-note">A familiar flavour, with a little ceremony</span>
+            <div class="wb-brand-story__image-wrap">
+              <img src="/assets/images/kesar_pista_angle.jpg" alt="Slice of saffron and pistachio cake finished with 24K gold leaf" loading="lazy" decoding="async" />
+              <span class="wb-brand-story__image-note">A familiar flavour, finished with ceremony</span>
             </div>
             <div class="wb-brand-story__copy">
-              <p class="wb-eyebrow">A little about us</p>
-              <h2 id="brand-story-title">A good cake<br />brings people <em>closer.</em></h2>
-              <p>WISHBAKE brings thoughtful design and the pleasure of a freshly baked cake to the same table. Choose a favourite from the collection, or shape something of your own in the studio.</p>
-              <p>Each order is finished by hand, with care for the details that make a celebration feel personal.</p>
-              <a class="wb-button wb-button--outline" href="#about">Our story <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></a>
+              <p class="wb-eyebrow">About WISHBAKE</p>
+              <h2 id="brand-about-title">A good cake<br />brings people <em>closer.</em></h2>
+              <p>WISHBAKE brings thoughtful design and the pleasure of a freshly baked cake to the same table. Choose a flagship centerpiece from the collection, or shape your own creation in our 3D studio.</p>
+              <p>Each order is finished by hand in Bhubaneswar, with care for every detail that makes a gathering memorable.</p>
+              <a class="wb-button wb-button--outline" href="#about">About WISHBAKE <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></a>
             </div>
           </div>
         </section>
@@ -125,13 +163,13 @@ export class HomeHero {
               <button class="wb-occasion-card" type="button" data-category="Weddings & Galas">
                 <span class="wb-occasion-card__icon"><span class="material-symbols-outlined" aria-hidden="true">local_florist</span></span>
                 <span class="wb-occasion-card__title">Weddings</span>
-                <span class="wb-occasion-card__copy">Tiers and finishing details for a long-awaited day.</span>
+                <span class="wb-occasion-card__copy">Multi-tier grandeur and finishing details for your day.</span>
                 <span class="wb-occasion-card__arrow" aria-hidden="true">↗</span>
               </button>
               <button class="wb-occasion-card" type="button" data-category="Anniversary">
                 <span class="wb-occasion-card__icon"><span class="material-symbols-outlined" aria-hidden="true">favorite_border</span></span>
                 <span class="wb-occasion-card__title">Anniversaries</span>
-                <span class="wb-occasion-card__copy">A small reason to make a lovely evening of it.</span>
+                <span class="wb-occasion-card__copy">Signature chocolate, berries, and curated gift cakes.</span>
                 <span class="wb-occasion-card__arrow" aria-hidden="true">↗</span>
               </button>
             </div>
@@ -142,12 +180,12 @@ export class HomeHero {
           <div class="wb-process__inner">
             <div class="wb-section__heading">
               <p class="wb-eyebrow">From idea to table</p>
-              <h2 id="process-title">A little planning.<br /><em>A lot of cake.</em></h2>
+              <h2 id="process-title">Thoughtfully planned.<br /><em>Freshly baked.</em></h2>
             </div>
             <div class="wb-process__steps">
-              <article class="wb-process__step"><span class="wb-process__number">01</span><h3>Choose a cake</h3><p>Start with one of our signature creations or open the studio for a custom design.</p></article>
-              <article class="wb-process__step"><span class="wb-process__number">02</span><h3>Make it yours</h3><p>Set the size, flavour, colour, and finishing touches that suit the occasion.</p></article>
-              <article class="wb-process__step"><span class="wb-process__number">03</span><h3>Gather around</h3><p>We prepare your cake for the date and delivery details you provide at checkout.</p></article>
+              <article class="wb-process__step"><span class="wb-process__number">01</span><h3>Choose a cake</h3><p>Start with one of our flagship creations or open the studio for a custom tiered design.</p></article>
+              <article class="wb-process__step"><span class="wb-process__number">02</span><h3>Make it yours</h3><p>Set the tiers, size, flavour, icing colour, fondant plaque, and celebration add-ons.</p></article>
+              <article class="wb-process__step"><span class="wb-process__number">03</span><h3>Gather around</h3><p>We bake your cake fresh and deliver chilled across serviceable Bhubaneswar PIN codes.</p></article>
             </div>
           </div>
         </section>
@@ -157,103 +195,36 @@ export class HomeHero {
             <div>
               <p class="wb-eyebrow">Your cake, your way</p>
               <h2 id="home-cta-title">Have someone in mind?</h2>
-              <p>Start with a flavour, a colour, or a sketch. We’ll take it from there.</p>
+              <p>Start with a flavour, a colour, or a multi-tier concept in our 3D studio.</p>
             </div>
             <button id="home-cta-design-btn" class="wb-button wb-button--light" type="button">Start a design <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
           </div>
         </section>
+
+        ${renderMinimalTermsSection('home')}
       </div>
     `;
 
-    this.mountViewer();
-    this.loadFeaturedCakes();
     this.attachEvents();
-    this.playEntrance(this.container.querySelectorAll('.wb-home-hero [data-motion-in]'), 0.06);
-  }
-
-  playEntrance(elements, delayStep = 0.05) {
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    Array.from(elements).forEach((element, index) => {
-      this.motionControls.push(animate(element, { opacity: [0, 1], y: [12, 0] }, {
-        duration: 0.48,
-        delay: index * delayStep,
-        ease: [0.22, 1, 0.36, 1]
-      }));
-    });
-  }
-
-  mountViewer() {
-    const viewerContainer = this.container.querySelector('#hero-3d-viewer');
-    if (!viewerContainer) return;
-    this.viewer = new Cake3DViewer(viewerContainer);
-    this.viewer.updateCake({
-      tiers: 2,
-      shape: 'round',
-      size: '8in',
-      base_frosting: 'smooth',
-      icing_color: '#e8c9c9',
-      piping_style: 'pearl',
-      toppings: ['gold_leaf', 'macarons'],
-      inscription: ''
-    });
-  }
-
-  async loadFeaturedCakes() {
-    const grid = this.container.querySelector('#featured-cakes-grid');
-    if (!grid) return;
-    grid.innerHTML = Array(3).fill('<div class="wb-product-skeleton" aria-hidden="true"></div>').join('');
-
-    try {
-      const response = await fetch(apiUrl('/api/cakes'));
-      if (!response.ok) throw new Error(`Catalog request failed (${response.status})`);
-      const data = await response.json();
-      if (this.isDestroyed) return;
-      if (data.status !== 'success' || !Array.isArray(data.data)) throw new Error('Catalog response was not available.');
-
-      const featured = data.data.slice(0, 3);
-      if (!featured.length) {
-        grid.innerHTML = this.emptyCatalogMessage('Our next batch of cakes is on its way.');
-      } else {
-        grid.innerHTML = featured.map(cake => this.renderCakeCard(cake)).join('');
-        this.playEntrance(grid.querySelectorAll('[data-motion-card]'), 0.07);
-      }
-    } catch (error) {
-      if (this.isDestroyed) return;
-      console.warn('Could not load featured cakes', error);
-      grid.innerHTML = this.emptyCatalogMessage('The collection is having a moment. Please try the full shop.');
-    } finally {
-      if (!this.isDestroyed) grid.setAttribute('aria-busy', 'false');
-    }
-    grid.querySelector('[data-open-shop]')?.addEventListener('click', () => this.onExploreCollection());
-  }
-
-  emptyCatalogMessage(message) {
-    return `
-      <div class="wb-featured-empty">
-        <span class="material-symbols-outlined" aria-hidden="true">cake</span>
-        <p>${message}</p>
-        <button class="wb-text-link" type="button" data-open-shop>Visit the shop <span aria-hidden="true">↗</span></button>
-      </div>
-    `;
   }
 
   renderCakeCard(cake) {
     const detailHref = `#cake-detail?id=${encodeURIComponent(cake.id)}`;
-    const price = Number(cake.price || 0).toLocaleString('en-IN');
+    const price = formatINR(cake.price);
     return `
-      <a class="wb-product-card" data-motion-card href="${detailHref}">
+      <a class="wb-product-card" href="${detailHref}">
         <div class="wb-product-card__image-wrap">
-          <img src="${cake.image}" alt="${cake.title}" loading="lazy" decoding="async" />
-          ${cake.badge ? `<span class="wb-product-card__badge">${cake.badge}</span>` : ''}
+          <img src="${escapeHtml(cake.image)}" alt="${escapeHtml(cake.title)}" loading="lazy" decoding="async" />
+          ${cake.badge ? `<span class="wb-product-card__badge">${escapeHtml(cake.badge)}</span>` : ''}
           <span class="wb-product-card__image-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
         </div>
         <div class="wb-product-card__body">
-          <div class="wb-product-card__meta"><span>${cake.category}</span><span class="wb-product-card__rating"><span aria-hidden="true">★</span> ${cake.rating}</span></div>
-          <h3>${cake.title}</h3>
-          <p>${cake.description}</p>
+          <div class="wb-product-card__meta"><span>${escapeHtml(cake.category)}</span><span class="wb-product-card__rating"><span aria-hidden="true">★</span> ${escapeHtml(cake.rating)}</span></div>
+          <h3>${escapeHtml(cake.title)}</h3>
+          <p>${escapeHtml(cake.description)}</p>
           <div class="wb-product-card__footer">
-            <span class="wb-product-card__price">₹${price}</span>
-            <span class="wb-product-card__servings"><span class="material-symbols-outlined" aria-hidden="true">group</span> Serves ${cake.servings}</span>
+            <span class="wb-product-card__price">${price}</span>
+            <span class="wb-product-card__servings"><span class="material-symbols-outlined" aria-hidden="true">group</span> Serves ${escapeHtml(cake.servings)}</span>
           </div>
         </div>
       </a>
@@ -261,24 +232,53 @@ export class HomeHero {
   }
 
   attachEvents() {
-    this.container.querySelectorAll('#hero-customizer-btn, #hero-cta-customizer-btn, #home-cta-design-btn').forEach(button => {
-      button.addEventListener('click', () => this.onStartCustomizing());
-    });
-    this.container.querySelectorAll('#hero-explore-btn, #hero-view-all-btn').forEach(button => {
-      button.addEventListener('click', () => this.onExploreCollection());
-    });
-    this.container.querySelectorAll('.wb-occasion-card').forEach(button => {
-      button.addEventListener('click', () => this.onExploreCollection(button.dataset.category));
-    });
+    this._clickHandler = (event) => {
+      const target = event.target.closest('button, a');
+      if (!target || !this.container.contains(target)) return;
+
+      if (target.matches('#hero-customizer-btn, #hero-cta-customizer-btn, #home-cta-design-btn')) {
+        event.preventDefault();
+        if (typeof this.onStartCustomizing === 'function') {
+          this.onStartCustomizing();
+        } else {
+          window.location.hash = '#customizer';
+        }
+        return;
+      }
+
+      if (target.matches('#hero-explore-btn, #hero-view-all-btn')) {
+        event.preventDefault();
+        if (typeof this.onExploreCollection === 'function') {
+          this.onExploreCollection();
+        } else {
+          window.location.hash = '#shop';
+        }
+        return;
+      }
+
+      if (target.matches('.wb-occasion-card')) {
+        event.preventDefault();
+        const category = target.dataset.category || null;
+        if (typeof this.onExploreCollection === 'function') {
+          this.onExploreCollection(category);
+        } else {
+          window.location.hash = category ? `#shop?category=${encodeURIComponent(category)}` : '#shop';
+        }
+      }
+    };
+
+    this.container.addEventListener('click', this._clickHandler);
+  }
+
+  detachEvents() {
+    if (this._clickHandler) {
+      this.container.removeEventListener('click', this._clickHandler);
+      this._clickHandler = null;
+    }
   }
 
   destroy() {
     this.isDestroyed = true;
-    this.motionControls.forEach(control => control.stop());
-    this.motionControls = [];
-    if (this.viewer) {
-      this.viewer.destroy();
-      this.viewer = null;
-    }
+    this.detachEvents();
   }
 }

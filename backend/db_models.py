@@ -19,11 +19,23 @@ class OtpDB(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(255), index=True, nullable=False)
-    otp_code = Column(String(10), nullable=False)
+    # Stores salted HMAC-SHA256 hash of the 6-digit OTP; never plaintext.
+    otp_code = Column(String(255), nullable=False)
     expires_at = Column(Float, nullable=False)
     created_time = Column(Float, nullable=False)
-    attempts = Column(Integer, default=0)
+    attempts = Column(Integer, default=0, nullable=False)
+    locked_until = Column(Float, nullable=True)
     name = Column(String(255), nullable=True)
+    password_hash = Column(String(255), nullable=True)
+
+class EmailDispatchLogDB(Base):
+    __tablename__ = "email_dispatch_logs"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(255), index=True, nullable=False)
+    client_ip = Column(String(64), index=True, nullable=True)
+    purpose = Column(String(32), nullable=False, default="signup_otp")
+    created_time = Column(Float, index=True, nullable=False)
 
 class SessionDB(Base):
     __tablename__ = "sessions"

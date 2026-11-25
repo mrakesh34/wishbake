@@ -1,3 +1,5 @@
+import { renderMinimalTermsSection } from './TermsSection.js';
+
 export class AboutView {
   constructor(containerElement) {
     this.container = containerElement;
@@ -66,6 +68,8 @@ export class AboutView {
             <a href="mailto:concierge@wishbake.com" class="wb-text-link">Write to the bakery <span aria-hidden="true">↗</span></a>
           </div>
         </section>
+
+        ${renderMinimalTermsSection('about')}
       </div>
     `;
   }

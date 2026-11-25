@@ -1,60 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Thoughtfully crafted celebration cakes and a live 3D cake design studio from WISHBAKE." />
-  <meta name="theme-color" content="#f7f2e9" />
+  <meta name="description" content="Thoughtfully crafted celebration cakes and a live 3D cake design studio from WISHBAKE in Bhubaneswar." />
+  <meta name="theme-color" content="#f8f4ed" />
   <title>WISHBAKE — Cakes made for your moments</title>
-  
+
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            'surface': '#f7f2e9',
-            'surface-dim': '#e8dfd6',
-            'surface-tint': '#70243b',
-            'primary': '#70243b',
-            'primary-container': '#ead8db',
-            'on-primary': '#ffffff',
-            'on-primary-container': '#4d1b2b',
-            'secondary': '#80664d',
-            'secondary-container': '#eee5d8',
-            'tertiary': '#9b7548',
-            'tertiary-container': '#ead8ca',
-            'on-surface': '#332c2a',
-            'on-surface-variant': '#756c66',
-            'outline': '#84786e',
-            'outline-variant': '#e1d9cd',
-            'surface-container-lowest': '#ffffff',
-            'surface-container-low': '#fcf9f3',
-            'surface-container': '#f0e9de',
-            'surface-container-high': '#eae2d7',
-            'surface-container-highest': '#e2d8cc'
-          },
-          fontFamily: {
-            display: ['Cormorant Garamond', 'Georgia', 'serif'],
-            body: ['DM Sans', 'Arial', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
 
   <link rel="stylesheet" href="/src/style.css" />
 </head>
-<body class="wb-app-body font-body text-on-surface bg-surface min-h-screen flex flex-col antialiased">
-  
+<body class="wb-app-body">
+
   <!-- Scroll Progress Bar -->
   <div id="scroll-progress-bar" style="width: 0%"></div>
 
@@ -65,7 +27,7 @@
         <span class="wb-brand__mark" aria-hidden="true">W</span>
         <span class="wb-brand__wordmark">
           <span>WISHBAKE</span>
-          <small>BAKERY & CAKE STUDIO</small>
+          <small>BAKERY &amp; CAKE STUDIO</small>
         </span>
       </a>
 
@@ -73,7 +35,7 @@
         <a href="#home" class="nav-link wb-nav__link" data-page="home" aria-current="page">Home</a>
         <a href="#shop" class="nav-link wb-nav__link" data-page="shop">The collection</a>
         <a href="#customizer" class="nav-link wb-nav__link" data-page="customizer">Cake studio</a>
-        <a href="#about" class="nav-link wb-nav__link" data-page="about">Our story</a>
+        <a href="#about" class="nav-link wb-nav__link" data-page="about">About</a>
       </nav>
 
       <div class="wb-header__actions">
@@ -96,7 +58,7 @@
   </header>
 
   <!-- Main View Container -->
-  <main id="app-content" class="wb-app-main flex-grow pt-20">
+  <main id="app-content" class="wb-app-main">
     <!-- Dynamic page views mount here -->
   </main>
 
@@ -106,21 +68,21 @@
       <div class="wb-footer__brand-block">
         <a href="#home" class="wb-brand wb-brand--footer" aria-label="WISHBAKE home">
           <span class="wb-brand__mark" aria-hidden="true">W</span>
-          <span class="wb-brand__wordmark"><span>WISHBAKE</span><small>BAKERY & CAKE STUDIO</small></span>
+          <span class="wb-brand__wordmark"><span>WISHBAKE</span><small>BAKERY &amp; CAKE STUDIO</small></span>
         </a>
-        <p>Celebration cakes with a little more thought in every detail. Designed with you, finished by hand, and made to be shared.</p>
+        <p>Celebration cakes with a little more thought in every detail. Designed with you, finished by hand, and made to be shared across Bhubaneswar.</p>
       </div>
       <div class="wb-footer__column">
         <h2>Explore</h2>
         <a href="#customizer">Design a cake</a>
         <a href="#shop">The collection</a>
-        <a href="#about">Our story</a>
+        <a href="#about">About</a>
       </div>
       <div class="wb-footer__column">
         <h2>From our kitchen</h2>
         <span>Mon–Sat · 8:00 AM–8:00 PM</span>
-        <span>Chilled hand delivery</span>
-        <span>Baked for your occasion</span>
+        <span>Chilled Bhubaneswar delivery</span>
+        <span>Baked fresh for your occasion</span>
       </div>
       <div class="wb-footer__column wb-footer__contact">
         <h2>Need a hand?</h2>
@@ -135,187 +97,210 @@
   </footer>
 
   <!-- Slide-out Cart Drawer -->
-  <div id="cart-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden transition-opacity duration-300">
-    <div id="cart-panel" class="absolute top-0 right-0 w-full max-w-md h-full bg-white shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300">
-      <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-surface-container-low">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">shopping_bag</span>
-          <h3 class="font-display font-bold text-lg">Your Confectionery Bag</h3>
+  <div id="cart-overlay" class="wb-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title">
+    <div id="cart-panel" class="wb-drawer is-closed">
+      <div class="wb-drawer__head">
+        <div class="wb-drawer__title-group">
+          <span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
+          <h3 id="cart-drawer-title">Your Confectionery Bag</h3>
         </div>
-        <button id="close-cart-btn" class="p-1 text-on-surface-variant hover:text-primary rounded-full">
-          <span class="material-symbols-outlined">close</span>
+        <button id="close-cart-btn" class="wb-icon-close" type="button" aria-label="Close shopping bag">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
         </button>
       </div>
-      <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
-      <div class="p-6 border-t border-outline-variant bg-surface-container-lowest space-y-4">
-        <div class="space-y-2 text-sm">
-          <div class="flex justify-between text-on-surface-variant">
+
+      <div id="cart-items-container" class="wb-drawer__body"></div>
+
+      <div class="wb-drawer__footer">
+        <div class="wb-bag-totals">
+          <div class="wb-bag-totals__row">
             <span>Subtotal</span>
-            <span id="cart-subtotal" class="font-medium">₹0</span>
+            <span id="cart-subtotal">₹0</span>
           </div>
-          <div class="flex justify-between text-on-surface-variant">
+          <div class="wb-bag-totals__row">
             <span>Chilled Delivery</span>
-            <span id="cart-delivery" class="font-medium">₹149</span>
+            <span id="cart-delivery">₹149</span>
           </div>
-          <div class="flex justify-between text-base font-bold text-on-surface border-t border-dashed border-outline-variant pt-2">
-            <span>Total</span>
-            <span id="cart-total" class="text-primary font-display text-xl">₹0</span>
+          <div class="wb-bag-totals__row wb-bag-totals__row--total">
+            <span>Estimated Total</span>
+            <span id="cart-total">₹0</span>
           </div>
         </div>
-        <button id="checkout-btn" class="w-full bg-primary text-white font-bold py-3.5 rounded-full hover:shadow-lg hover:scale-[1.01] transition-all flex items-center justify-center gap-2">
+        <button id="checkout-btn" class="wb-button wb-button--primary wb-button--full" type="button">
           <span>Proceed to Checkout</span>
-          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
         </button>
       </div>
     </div>
   </div>
 
   <!-- Checkout Modal -->
-  <div id="checkout-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-8 shadow-2xl border border-outline-variant relative">
-      <button id="close-checkout-modal" class="absolute top-6 right-6 p-1 text-on-surface-variant hover:text-primary">
-        <span class="material-symbols-outlined">close</span>
+  <div id="checkout-modal" class="wb-modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+    <div class="wb-modal wb-modal--wide">
+      <button id="close-checkout-modal" class="wb-icon-close wb-modal__close" type="button" aria-label="Close checkout">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
       </button>
 
-      <div class="text-center mb-6">
-        <span class="material-symbols-outlined text-primary text-4xl">local_shipping</span>
-        <h3 class="font-display text-2xl font-bold text-on-surface mt-2">Delivery Details</h3>
-        <p class="text-xs text-on-surface-variant">Complete your order details to send to our master pastry kitchen.</p>
+      <div class="wb-modal__header">
+        <span class="material-symbols-outlined wb-modal__hero-icon" aria-hidden="true">local_shipping</span>
+        <h3 id="checkout-modal-title">Delivery Details</h3>
+        <p>Chilled hand delivery across Bhubaneswar, Odisha.</p>
       </div>
 
-      <form id="checkout-form" class="space-y-4">
-        <div id="checkout-auth-banner" class="hidden"></div>
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-1">Your Full Name</label>
-          <input type="text" id="cust-name" required placeholder="e.g. Priya Sharma" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-1">Recipient Name <span class="text-on-surface-variant font-normal normal-case">(if different)</span></label>
-          <input type="text" id="cust-recipient" placeholder="e.g. Rahul Sharma" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-1">Email</label>
-            <input type="email" id="cust-email" required placeholder="priya@example.com" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
+      <form id="checkout-form" class="wb-form" novalidate>
+        <div id="checkout-auth-banner" class="is-hidden"></div>
+
+        <div class="wb-form-row wb-form-row--2">
+          <div class="wb-field">
+            <label for="cust-name">Your Full Name</label>
+            <input type="text" id="cust-name" required placeholder="e.g. Priya Mohanty" autocomplete="name" />
           </div>
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-1">Phone</label>
-            <input type="tel" id="cust-phone" required placeholder="+91 98765 43210" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
+          <div class="wb-field">
+            <label for="cust-recipient">Recipient Name <span class="wb-label-opt">(if different)</span></label>
+            <input type="text" id="cust-recipient" placeholder="e.g. Subham Patnaik" />
           </div>
         </div>
 
-        <div class="border-t border-outline-variant/40 pt-4 mt-2">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-on-surface mb-3 flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-primary text-sm">location_on</span>
-            Delivery Address
+        <div class="wb-form-row wb-form-row--2">
+          <div class="wb-field">
+            <label for="cust-email">Account Email</label>
+            <input type="email" id="cust-email" required readonly placeholder="priya@example.com" autocomplete="email" />
+          </div>
+          <div class="wb-field">
+            <label for="cust-phone">Mobile Number</label>
+            <input type="tel" id="cust-phone" required placeholder="+91 98765 43210" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="wb-form-section">
+          <h4 class="wb-form-section__title">
+            <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+            Bhubaneswar Delivery Address
           </h4>
-          <div class="space-y-3">
-            <div>
-              <label class="block text-[11px] font-medium text-on-surface-variant mb-1">Flat / House No., Building Name</label>
-              <input type="text" id="cust-flat" required placeholder="e.g. Flat 302, Sunrise Apartments" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
+
+          <div class="wb-field">
+            <label for="cust-flat">Flat / House No., Building Name</label>
+            <input type="text" id="cust-flat" required placeholder="e.g. Plot 42, Kalinga Residency" autocomplete="address-line1" />
+          </div>
+
+          <div class="wb-field">
+            <label for="cust-street">Street, Colony / Locality</label>
+            <input type="text" id="cust-street" required placeholder="e.g. Janpath Road, Saheed Nagar" autocomplete="address-line2" />
+          </div>
+
+          <div class="wb-field">
+            <label for="cust-landmark">Landmark <span class="wb-label-opt">(optional)</span></label>
+            <input type="text" id="cust-landmark" placeholder="e.g. Near Esplanade One Mall" />
+          </div>
+
+          <div class="wb-form-row wb-form-row--3">
+            <div class="wb-field">
+              <label for="cust-city">City</label>
+              <input type="text" id="cust-city" required value="Bhubaneswar" placeholder="Bhubaneswar" />
             </div>
-            <div>
-              <label class="block text-[11px] font-medium text-on-surface-variant mb-1">Street, Area / Locality</label>
-              <input type="text" id="cust-street" required placeholder="e.g. MG Road, Indiranagar" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
+            <div class="wb-field">
+              <label for="cust-state">State</label>
+              <input type="text" id="cust-state" required value="Odisha" placeholder="Odisha" />
             </div>
-            <div>
-              <label class="block text-[11px] font-medium text-on-surface-variant mb-1">Landmark <span class="text-outline font-normal">(optional)</span></label>
-              <input type="text" id="cust-landmark" placeholder="e.g. Near Phoenix Mall" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
-            </div>
-            <div class="grid grid-cols-3 gap-3">
-              <div>
-                <label class="block text-[11px] font-medium text-on-surface-variant mb-1">City</label>
-                <input type="text" id="cust-city" required value="Bhubaneswar" placeholder="Bhubaneswar" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-medium text-on-surface-variant mb-1">State</label>
-                <input type="text" id="cust-state" required value="Odisha" placeholder="Odisha" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
-              </div>
-              <div>
-                <label class="block text-[11px] font-medium text-on-surface-variant mb-1">PIN Code</label>
-                <input type="text" id="cust-pincode" required placeholder="PIN code" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
-              </div>
+            <div class="wb-field">
+              <label for="cust-pincode">PIN Code</label>
+              <input type="text" id="cust-pincode" required maxlength="6" inputmode="numeric" placeholder="751007" autocomplete="postal-code" />
+              <p id="cust-pincode-hint" class="wb-field-hint is-hidden"></p>
             </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-1">Delivery Date</label>
-            <input type="date" id="cust-date" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
+        <div class="wb-form-row wb-form-row--2">
+          <div class="wb-field">
+            <label for="cust-date">Delivery Date</label>
+            <input type="date" id="cust-date" required />
           </div>
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-1">Time Slot</label>
-            <select id="cust-timeslot" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white">
+          <div class="wb-field">
+            <label for="cust-timeslot">Time Slot</label>
+            <select id="cust-timeslot">
               <option value="morning">Morning (9 AM – 12 PM)</option>
               <option value="afternoon" selected>Afternoon (12 PM – 4 PM)</option>
               <option value="evening">Evening (4 PM – 8 PM)</option>
-              <option value="night">Night (8 PM – 11 PM)</option>
+              <option value="night">Night (8 PM – 11 PM · +₹99)</option>
             </select>
           </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-on-surface mb-1">Special Instructions</label>
-          <textarea id="cust-instructions" rows="2" placeholder="e.g. Ring doorbell on arrival, eggless cake preferred, no nuts" class="w-full px-4 py-2.5 text-sm rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none"></textarea>
+        <div class="wb-field">
+          <label for="cust-instructions">Special Instructions <span class="wb-label-opt">(optional)</span></label>
+          <textarea id="cust-instructions" rows="2" placeholder="e.g. Ring doorbell on arrival, eggless preferred, no nuts"></textarea>
         </div>
 
-        <fieldset class="space-y-2">
-          <legend class="block text-xs font-bold uppercase tracking-wider text-on-surface">Payment Method</legend>
-          <div class="grid grid-cols-2 gap-3">
-            <label class="flex cursor-pointer items-center gap-2 rounded-xl border-2 border-primary bg-primary/5 p-3 text-sm">
-              <input type="radio" name="payment_method" value="COD" checked class="accent-primary" />
-              <span><strong class="block">Cash on Delivery</strong><small class="text-on-surface-variant">Pay when your order arrives</small></span>
+        <fieldset class="wb-payment-fieldset">
+          <legend>Payment Method</legend>
+          <div class="wb-payment-grid">
+            <label class="wb-payment-option is-selected" data-payment-card="COD">
+              <input type="radio" name="payment_method" value="COD" checked />
+              <span>
+                <strong>Cash on Delivery</strong>
+                <small>Pay when your order arrives</small>
+              </span>
             </label>
-            <button type="button" id="online-payment-option" aria-describedby="online-payment-message" class="rounded-xl border border-outline-variant p-3 text-left text-sm hover:border-primary hover:bg-primary/5 transition-colors">
-              <strong class="block">Online Payment</strong><small class="text-on-surface-variant">UPI, cards &amp; more</small>
-            </button>
+            <label class="wb-payment-option" data-payment-card="CASHFREE">
+              <input type="radio" name="payment_method" value="CASHFREE" />
+              <span>
+                <strong>Cashfree Online Payment</strong>
+                <small>UPI, Cards, NetBanking &amp; Wallets</small>
+              </span>
+            </label>
           </div>
-          <p id="online-payment-message" role="status" aria-live="polite" class="hidden rounded-xl bg-amber-50 p-3 text-xs text-amber-900">Online payment is coming soon. Please choose Cash on Delivery to place your order.</p>
+          <p id="cashfree-payment-notice" role="status" aria-live="polite" class="wb-inline-notice is-hidden">
+            Cashfree Payment Gateway UI ready (UPI, Cards, NetBanking &amp; Wallets in ₹ INR). Live gateway session activates once merchant API keys are connected on checkout.
+          </p>
+          <p class="wb-checkout-terms-note">
+            By placing an order, you agree to WISHBAKE’s <a href="#about" id="checkout-terms-link">Terms &amp; Conditions</a> and 24-hour cancellation policy.
+          </p>
         </fieldset>
 
-        <div class="wb-checkout-total bg-surface-container p-4 rounded-2xl border border-outline-variant/40 flex justify-between items-center text-sm mt-4">
-          <span>Order Total (Inc. Delivery):</span>
-          <span id="modal-order-total" class="font-display font-bold text-xl text-primary">₹0</span>
+        <div class="wb-checkout-total">
+          <div>
+            <span>Order Total (Delivery: <span id="modal-delivery-fee">₹149</span>)</span>
+          </div>
+          <strong id="modal-order-total">₹0</strong>
         </div>
 
-        <button type="submit" id="place-order-submit-btn" class="w-full bg-primary text-white font-bold py-4 rounded-full hover:bg-primary/90 transition-colors shadow-md flex items-center justify-center gap-2">
-          <span>Place COD Order</span>
-          <span class="material-symbols-outlined">check_circle</span>
+        <button type="submit" id="place-order-submit-btn" class="wb-button wb-button--primary wb-button--full">
+          <span id="place-order-btn-label">Place COD Order</span>
+          <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
         </button>
       </form>
     </div>
   </div>
 
   <!-- Order Confirmation Success Modal -->
-  <div id="order-success-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-outline-variant text-center space-y-4">
-      <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
-        <span class="material-symbols-outlined text-4xl">task_alt</span>
+  <div id="order-success-modal" class="wb-modal-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="order-success-title">
+    <div class="wb-modal wb-modal--compact wb-success-modal">
+      <div class="wb-success-modal__badge" aria-hidden="true">
+        <span class="material-symbols-outlined">task_alt</span>
       </div>
-      <h3 class="font-display text-2xl font-bold text-on-surface">Order Confirmed!</h3>
-      <p class="text-xs text-on-surface-variant">Thank you! Your Cash on Delivery order has been placed. Please pay when it arrives.</p>
-      
-      <div class="bg-surface-container p-4 rounded-2xl text-left text-xs space-y-2 border border-outline-variant/40">
-        <div class="flex justify-between">
-          <span class="text-on-surface-variant">Order Reference:</span>
-          <span id="confirmed-order-id" class="font-mono font-bold text-primary">WISH-8F92A10C</span>
+      <h3 id="order-success-title">Order Confirmed!</h3>
+      <p class="wb-success-modal__subtitle" id="confirmed-order-subtitle">Thank you! Your order has been sent to our pastry kitchen.</p>
+
+      <div class="wb-success-modal__summary">
+        <div>
+          <span>Order Reference</span>
+          <strong id="confirmed-order-id" class="wb-mono">WISH-8F92A10C</strong>
         </div>
-        <div class="flex justify-between">
-          <span class="text-on-surface-variant">Estimated Delivery:</span>
-          <span id="confirmed-delivery-date" class="font-medium">Tomorrow</span>
+        <div>
+          <span>Estimated Delivery</span>
+          <strong id="confirmed-delivery-date">Tomorrow</strong>
         </div>
-        <div class="flex justify-between">
-          <span class="text-on-surface-variant">Total Amount:</span>
-          <span id="confirmed-total" class="font-bold text-on-surface">₹0</span>
+        <div>
+          <span>Total Amount</span>
+          <strong id="confirmed-total">₹0</strong>
         </div>
-        <div class="flex justify-between">
-          <span class="text-on-surface-variant">Payment:</span>
-          <span class="font-bold text-on-surface">Cash on Delivery</span>
+        <div>
+          <span>Payment</span>
+          <strong id="confirmed-payment-method">Cash on Delivery</strong>
         </div>
       </div>
 
-      <button id="close-success-btn" class="w-full bg-primary text-white font-bold py-3 rounded-full hover:bg-primary/90 transition-colors">
+      <button id="close-success-btn" class="wb-button wb-button--primary wb-button--full" type="button">
         Continue Browsing
       </button>
     </div>

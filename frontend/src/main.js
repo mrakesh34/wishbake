@@ -8,11 +8,49 @@ import { ScrollAnimator } from './components/ScrollAnimator.js';
 import { authManager } from './services/AuthManager.js';
 import { AuthModal } from './components/AuthModal.js';
 import { AccountDrawer } from './components/AccountDrawer.js';
+import { escapeHtml } from './utils/ui.js';
+
+const GUEST_CART_KEY = 'wb_guest_cart';
+
+function loadGuestCart() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || '[]');
+    return Array.isArray(raw) ? raw : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveGuestCart(items) {
+  try {
+    localStorage.setItem(GUEST_CART_KEY, JSON.stringify(items || []));
+  } catch {
+    /* ignore storage quota errors */
+  }
+}
+
+function mergeCartItems(serverItems = [], guestItems = []) {
+  const merged = (serverItems || []).map(item => ({ ...item }));
+  (guestItems || []).forEach(guestItem => {
+    if (guestItem.item_type === 'preset') {
+      const sizeKey = guestItem.size || '1lb';
+      const existing = merged.find(
+        item => item.item_type === 'preset' && item.cake_id === guestItem.cake_id && (item.size || '1lb') === sizeKey
+      );
+      if (existing) {
+        existing.quantity += guestItem.quantity || 1;
+        return;
+      }
+    }
+    merged.push({ ...guestItem });
+  });
+  return merged;
+}
 
 class App {
   constructor() {
     this.appContent = document.getElementById('app-content');
-    this.cartState = [];
+    this.cartState = authManager.isLoggedIn() ? [] : loadGuestCart();
     this.cartDrawer = null;
     this.authModal = null;
     this.accountDrawer = null;
@@ -33,7 +71,11 @@ class App {
       this.cartState,
       (updatedCart) => {
         this.cartState = updatedCart;
-        if (authManager.isLoggedIn()) authManager.saveCart(updatedCart).catch(console.error);
+        if (authManager.isLoggedIn()) {
+          authManager.saveCart(updatedCart).catch(console.error);
+        } else {
+          saveGuestCart(updatedCart);
+        }
       },
       () => {
         this.authModal.open();
@@ -41,7 +83,6 @@ class App {
     );
 
     this.setupHeaderAuth();
-
     this.setupMobileNav();
     window.addEventListener('hashchange', () => this.routePage());
     this.routePage();
@@ -80,6 +121,26 @@ class App {
     if (icon) icon.textContent = isOpen ? 'close' : 'menu';
   }
 
+  async syncAuthenticatedCart() {
+    if (!authManager.isLoggedIn()) return;
+    try {
+      const { items: serverItems } = await authManager.fetchCart();
+      const guestItems = loadGuestCart();
+      if (guestItems.length > 0) {
+        const merged = mergeCartItems(serverItems || [], guestItems);
+        saveGuestCart([]);
+        this.cartState = merged;
+        await authManager.saveCart(merged);
+      } else {
+        this.cartState = serverItems || [];
+      }
+      this.cartDrawer.cart = this.cartState;
+      this.cartDrawer.renderCartItems();
+    } catch (error) {
+      console.error('Failed to sync account cart', error);
+    }
+  }
+
   setupHeaderAuth() {
     const accountBtn = document.getElementById('header-account-btn');
     if (accountBtn) {
@@ -94,30 +155,29 @@ class App {
 
     authManager.onAuthChange(({ user, isLoggedIn }) => {
       this.updateHeaderAuthUI(user);
-      if (isLoggedIn) authManager.fetchCart().then(({ items }) => {
-        this.cartState = items || [];
+      if (isLoggedIn) {
+        this.syncAuthenticatedCart();
+      } else {
+        this.cartState = loadGuestCart();
         this.cartDrawer.cart = this.cartState;
         this.cartDrawer.renderCartItems();
-      }).catch(console.error);
+      }
     });
 
     this.updateHeaderAuthUI(authManager.getUser());
-    if (authManager.isLoggedIn()) authManager.fetchCart().then(({ items }) => {
-      this.cartState = items || [];
-      this.cartDrawer.cart = this.cartState;
-      this.cartDrawer.renderCartItems();
-    }).catch(console.error);
+    if (authManager.isLoggedIn()) {
+      this.syncAuthenticatedCart();
+    }
   }
 
   updateHeaderAuthUI(user) {
     const accountBtn = document.getElementById('header-account-btn');
-    const labelEl = document.getElementById('header-account-label');
-    if (!accountBtn || !labelEl) return;
+    if (!accountBtn) return;
 
     if (user && authManager.isLoggedIn()) {
-      const initial = (user.name ? user.name.charAt(0) : user.email.charAt(0)).toUpperCase();
-      const displayName = user.name ? user.name.split(' ')[0] : user.email.split('@')[0];
-      
+      const initial = escapeHtml((user.name ? user.name.charAt(0) : user.email.charAt(0)).toUpperCase());
+      const displayName = escapeHtml(user.name ? user.name.split(' ')[0] : user.email.split('@')[0]);
+
       accountBtn.className = 'wb-account-button';
       accountBtn.innerHTML = `
         <span class="wb-account-button__avatar" aria-hidden="true">${initial}</span>
@@ -128,7 +188,7 @@ class App {
       accountBtn.className = 'wb-account-button';
       accountBtn.innerHTML = `
         <span class="material-symbols-outlined" aria-hidden="true">person_outline</span>
-        <span id="header-account-label">Sign In</span>
+        <span id="header-account-label">Sign in</span>
       `;
     }
   }
@@ -137,11 +197,10 @@ class App {
     this.setMobileNavOpen(false);
     const rawHash = window.location.hash.replace('#', '') || 'home';
     const [path, queryString] = rawHash.split('?');
-
-    // Parse query params
     const queryParams = new URLSearchParams(queryString || '');
 
-    // Update active nav links
+    document.body.classList.toggle('wb-is-customizer', path === 'customizer');
+
     document.querySelectorAll('.nav-link').forEach(link => {
       if (link.dataset.page === path) {
         link.setAttribute('aria-current', 'page');
@@ -155,20 +214,34 @@ class App {
     }
 
     this.appContent.innerHTML = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
+    const goToCustomizer = (presetCake = null) => {
+      window.location.hash = presetCake?.id
+        ? `#customizer?preset=${encodeURIComponent(presetCake.id)}`
+        : '#customizer';
+    };
+
+    const goToShop = (category = null) => {
+      window.location.hash = category && category !== 'All'
+        ? `#shop?category=${encodeURIComponent(category)}`
+        : '#shop';
+    };
 
     if (path === 'home') {
       this.activeComponent = new HomeHero(
         this.appContent,
-        () => { window.location.hash = '#customizer'; },
-        (category) => { window.location.hash = '#shop'; }
+        () => goToCustomizer(null),
+        (category) => goToShop(category)
       );
     } else if (path === 'shop') {
+      const initialCategory = queryParams.get('category') || 'All';
       this.activeComponent = new ShopGallery(
         this.appContent,
         (item) => this.cartDrawer.addItem(item),
-        (presetCake) => { window.location.hash = '#customizer'; },
-        (cakeId) => { window.location.hash = `#cake-detail?id=${cakeId}`; }
+        (presetCake) => goToCustomizer(presetCake),
+        (cakeId) => { window.location.hash = `#cake-detail?id=${encodeURIComponent(cakeId)}`; },
+        initialCategory
       );
     } else if (path === 'cake-detail') {
       const cakeId = queryParams.get('id') || 'cake-gulab-cheesecake';
@@ -176,12 +249,14 @@ class App {
         this.appContent,
         cakeId,
         (item) => this.cartDrawer.addItem(item),
-        (presetCake) => { window.location.hash = '#customizer'; }
+        (presetCake) => goToCustomizer(presetCake)
       );
     } else if (path === 'customizer') {
+      const presetId = queryParams.get('preset') || null;
       this.activeComponent = new CustomizerStudio(
         this.appContent,
-        (item) => this.cartDrawer.addItem(item)
+        (item) => this.cartDrawer.addItem(item),
+        presetId
       );
     } else if (path === 'about') {
       this.activeComponent = new AboutView(this.appContent);
@@ -189,7 +264,6 @@ class App {
       window.location.hash = '#home';
     }
 
-    // Observe scroll-reveal elements on the new page
     requestAnimationFrame(() => {
       this.scrollAnimator.observeElements(this.appContent);
       this.scrollAnimator.observeCounters(this.appContent);

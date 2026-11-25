@@ -1,3 +1,4 @@
+import os
 import uuid
 from datetime import datetime
 from typing import Optional
@@ -11,7 +12,7 @@ from backend.models import (
     PriceCalculationRequest, PriceCalculationResponse,
     CreateOrderRequest, OrderResponse
 )
-from backend.data import CUSTOMIZER_OPTIONS, PRESET_CAKES
+from backend.data import CUSTOMIZER_OPTIONS, NIGHT_SLOT_FEE_INR, PRESET_CAKES, PRESET_SIZE_MULTIPLIERS
 
 router = APIRouter(prefix="/api", tags=["Orders & Pricing"])
 DELIVERY_FEE_INR = 149.0
@@ -75,8 +76,14 @@ def calculate_price_for_selection(selection) -> PriceCalculationResponse:
         if top in topping_price_map:
             toppings_extra += topping_price_map[top]
 
+    addons_extra = 0.0
+    addon_price_map = {a["id"]: a["price"] for a in CUSTOMIZER_OPTIONS.get("party_addons", [])}
+    for addon in getattr(selection, "addons", []) or []:
+        if addon in addon_price_map:
+            addons_extra += addon_price_map[addon]
+
     inscription_extra = 99.0 if (selection.inscription and selection.inscription.strip()) else 0.0
-    total_price = round(base_price + tier_extra + toppings_extra + inscription_extra, 2)
+    total_price = round(base_price + tier_extra + toppings_extra + addons_extra + inscription_extra, 2)
     
     total_weight_lbs = round(weight_lbs * (1.0 + (selection.tiers - 1) * 0.7), 1)
     total_weight_kg = round(weight_kg * (1.0 + (selection.tiers - 1) * 0.7), 2)
@@ -86,6 +93,7 @@ def calculate_price_for_selection(selection) -> PriceCalculationResponse:
         base_price=base_price,
         tiers_extra=tier_extra,
         toppings_extra=toppings_extra,
+        addons_extra=addons_extra,
         inscription_extra=inscription_extra,
         total_price=total_price,
         currency="INR",
@@ -102,6 +110,12 @@ def calculate_customizer_price(req: PriceCalculationRequest):
 def create_order(req: CreateOrderRequest, db: Session = Depends(get_db), user=Depends(get_current_user_from_token)):
     if not user:
         raise HTTPException(status_code=401, detail="Sign in before placing an order.")
+    if req.payment_method == "CASHFREE":
+        if not (os.getenv("CASHFREE_APP_ID") and os.getenv("CASHFREE_SECRET_KEY")):
+            raise HTTPException(
+                status_code=503,
+                detail="Cashfree Payments is configured in checkout UI and awaiting merchant API keys (CASHFREE_APP_ID, CASHFREE_SECRET_KEY). Select Cash on Delivery for test orders now."
+            )
     order_id = f"WISH-{uuid.uuid4().hex[:8].upper()}"
     persisted_items = []
     items_subtotal = 0.0
@@ -112,19 +126,28 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db), user=De
             preset = next((cake_data for cake_data in PRESET_CAKES if cake_data["id"] == item.cake_id), None)
             if not cake and not preset:
                 raise HTTPException(status_code=422, detail=f"Cake '{item.cake_id}' is unavailable.")
-            stored_item["title"] = cake.title if cake else preset["title"]
-            stored_item["unit_price"] = float(cake.price if cake else preset["price"])
+            size_key = (item.size or "1lb").strip()
+            if size_key not in PRESET_SIZE_MULTIPLIERS:
+                raise HTTPException(status_code=422, detail=f"Unsupported cake size '{size_key}'.")
+            base_title = cake.title if cake else preset["title"]
+            base_price = float(cake.price if cake else preset["price"])
+            multiplier = PRESET_SIZE_MULTIPLIERS[size_key]
+            stored_item["size"] = size_key
+            stored_item["title"] = f"{base_title} ({size_key})"
+            stored_item["unit_price"] = float(round(base_price * multiplier))
         elif item.item_type == "custom":
             if not item.selection:
                 raise HTTPException(status_code=422, detail="Custom cake items need a cake selection.")
             priced = calculate_price_for_selection(item.selection)
-            stored_item["title"] = "Custom Cake"
+            stored_item["title"] = item.title.strip() if item.title and item.title.strip() else "Custom Cake"
             stored_item["unit_price"] = priced.total_price
         else:
             raise HTTPException(status_code=422, detail="Unsupported order item type.")
         items_subtotal += stored_item["unit_price"] * item.quantity
         persisted_items.append(stored_item)
-    total_amount = round(items_subtotal + DELIVERY_FEE_INR, 2)
+    slot_fee = NIGHT_SLOT_FEE_INR if req.delivery_time_slot == "night" else 0.0
+    delivery_fee = round(DELIVERY_FEE_INR + slot_fee, 2)
+    total_amount = round(items_subtotal + delivery_fee, 2)
     
     address_parts = [req.flat_house_no, req.street_locality]
     if req.landmark:
@@ -145,7 +168,7 @@ def create_order(req: CreateOrderRequest, db: Session = Depends(get_db), user=De
         recipient_name=req.recipient_name,
         special_instructions=req.special_instructions,
         total_amount=round(total_amount, 2),
-        delivery_fee=DELIVERY_FEE_INR,
+        delivery_fee=delivery_fee,
         payment_method=req.payment_method,
         payment_status="PENDING",
         currency="INR",

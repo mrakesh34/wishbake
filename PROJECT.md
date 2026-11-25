@@ -25,7 +25,7 @@ The API is at `http://127.0.0.1:8000`; API docs are at `/docs`; Vite is at `http
 ## Current features
 
 - Catalog, cake detail pages, customizer pricing, 3D preview, cart and checkout.
-- Email/password account signup and login. Passwords are stored as PBKDF2 hashes; API sessions are persisted in the database.
+- Email/password account signup gated by 6-digit email OTP verification via Brevo HTTPS API v3 (dispatched over port 443 to work on Render Free tier without SMTP). Returning users sign in with email/password; passwords use PBKDF2 hashes, OTPs are salted HMAC-SHA256 hashes verified in constant time with 10-minute expiry, 5-attempt lockout, and DB-backed resend cooldown/rate limits. API sessions are persisted in the database.
 - User profiles, saved addresses, carts, and orders are database-backed. Signed-in carts sync to the account. Guest checkout remains available, but guest carts are not synced across devices.
 - Neon/PostgreSQL is required through `backend/.env` → `DATABASE_URL`. The app fails startup if it is missing or if the database is unavailable; it must not use SQLite.
 - Prices and order currency are INR. The current catalog/options values are retained as rupee amounts; local-market price validation is a later task. The launch delivery area is Bhubaneswar, Odisha; address validation is deferred.
@@ -38,7 +38,7 @@ The API is at `http://127.0.0.1:8000`; API docs are at `/docs`; Vite is at `http
 - `GET /health`
 - `GET /api/cakes`, `GET /api/cakes/{id}`, `GET /api/customizer/options`
 - `POST /api/customizer/price`
-- `POST /api/auth/signup`, `POST /api/auth/login`, `GET /api/auth/me`, `POST /api/auth/logout`
+- `POST /api/auth/signup`, `POST /api/auth/verify-otp`, `POST /api/auth/resend-otp`, `POST /api/auth/login`, `GET /api/auth/me`, `POST /api/auth/logout`
 - `GET|PUT /api/auth/cart`
 - `PUT /api/auth/profile`, `GET /api/auth/orders`
 - `POST /api/orders`, `GET /api/orders/{id}` (authenticated owner only)
@@ -56,6 +56,6 @@ The API is at `http://127.0.0.1:8000`; API docs are at `/docs`; Vite is at `http
 
 - Target currency: INR.
 - Delivery area: Bhubaneswar, Odisha; no address validation for now.
-- Authentication: email and password; no email OTP for now.
+- Authentication: email + password sign-up gated by 6-digit email OTP verification (Brevo HTTPS API); email + password login for verified accounts.
 - Payment: not selected yet.
 - Admin/staff tools: postponed.

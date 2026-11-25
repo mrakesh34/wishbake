@@ -1,4 +1,6 @@
 import { apiUrl } from '../services/api.js';
+import { escapeHtml, formatINR } from '../utils/ui.js';
+import { PRESET_SIZE_MULTIPLIERS } from '../utils/validation.js';
 
 export class SingleCakeDetail {
   constructor(containerElement, cakeId, onAddToCartCallback, onCustomizeSimilarCallback) {
@@ -9,19 +11,22 @@ export class SingleCakeDetail {
     this.cake = null;
     this.selectedPortion = 1;
     this.selectedSize = '1lb';
+    this.activeImageIndex = 0;
+    this.isDestroyed = false;
     this.init();
   }
 
   async init() {
     this.renderSkeleton();
     await this.fetchCakeDetail();
+    if (this.isDestroyed) return;
     if (this.cake) this.render();
     else this.renderError();
   }
 
   async fetchCakeDetail() {
     try {
-      const response = await fetch(apiUrl(`/api/cakes/${this.cakeId}`));
+      const response = await fetch(apiUrl(`/api/cakes/${encodeURIComponent(this.cakeId)}`));
       const data = await response.json();
       if (data.status === 'success') this.cake = data.data;
     } catch (error) {
@@ -59,34 +64,53 @@ export class SingleCakeDetail {
       { id: '1lb', label: '1 lb', servings: '6–8 servings' },
       { id: '3lb', label: '3 lb', servings: '16–22 servings' }
     ];
-    const sizeMultiplier = this.selectedSize === '3lb' ? 1.5 : (this.selectedSize === '0.5lb' ? 0.6 : 1.0);
-    const computedPrice = this.cake.price * sizeMultiplier * this.selectedPortion;
+    const sizeMultiplier = PRESET_SIZE_MULTIPLIERS[this.selectedSize] || 1.0;
+    const unitPrice = Math.round(this.cake.price * sizeMultiplier);
+    const computedPrice = unitPrice * this.selectedPortion;
+
+    const images = Array.isArray(this.cake.images) && this.cake.images.length > 0
+      ? this.cake.images
+      : [this.cake.image];
+    const angleLabels = ['Front view', 'Angled view', 'Top view'];
+    const mainImage = images[this.activeImageIndex] || this.cake.image;
 
     this.container.innerHTML = `
       <section class="wb-detail" aria-labelledby="detail-title">
         <div class="wb-page-width">
           <nav class="wb-detail__breadcrumb" aria-label="Breadcrumb">
             <a href="#home">Home</a><span aria-hidden="true">/</span>
-            <a href="#shop">The collection</a><span aria-hidden="true">/</span>
-            <span aria-current="page">${this.cake.title}</span>
+            <a href="#shop?category=${encodeURIComponent(this.cake.category)}">${escapeHtml(this.cake.category)}</a><span aria-hidden="true">/</span>
+            <span aria-current="page">${escapeHtml(this.cake.title)}</span>
           </nav>
 
           <div class="wb-detail__layout">
-            <figure class="wb-detail__gallery">
-              <img id="main-cake-img" src="${this.cake.image}" alt="${this.cake.title}" fetchpriority="high" decoding="async" />
-              ${this.cake.badge ? `<figcaption class="wb-product-card__badge">${this.cake.badge}</figcaption>` : ''}
-              <div class="wb-detail__image-caption"><span>WISHBAKE · THE COLLECTION</span><strong>Made for the table.</strong></div>
-            </figure>
+            <div class="wb-detail__gallery-col">
+              <figure class="wb-detail__gallery">
+                <img id="main-cake-img" src="${escapeHtml(mainImage)}" alt="${escapeHtml(this.cake.title)}" fetchpriority="high" decoding="async" />
+                ${this.cake.badge ? `<figcaption class="wb-product-card__badge">${escapeHtml(this.cake.badge)}</figcaption>` : ''}
+                <div class="wb-detail__image-caption"><span>WISHBAKE · THE COLLECTION</span><strong>Made for the table.</strong></div>
+              </figure>
+              ${images.length > 1 ? `
+                <div class="wb-detail__thumbs" role="group" aria-label="Cake angles">
+                  ${images.map((imgUrl, idx) => `
+                    <button type="button" class="wb-detail__thumb ${this.activeImageIndex === idx ? 'is-selected' : ''}" data-img-idx="${idx}" aria-label="${angleLabels[idx] || `Angle ${idx + 1}`}" aria-pressed="${this.activeImageIndex === idx}">
+                      <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(this.cake.title)} — ${angleLabels[idx] || `Angle ${idx + 1}`}" loading="lazy" />
+                      <span>${angleLabels[idx] || `View ${idx + 1}`}</span>
+                    </button>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
 
             <div class="wb-detail__order-panel">
-              <p class="wb-eyebrow">${this.cake.category}</p>
-              <h1 id="detail-title">${this.cake.title}</h1>
-              <div class="wb-detail__rating"><span aria-hidden="true">★</span><strong>${this.cake.rating}</strong><span>(${this.cake.reviews} reviews)</span></div>
-              <p class="wb-detail__description">${this.cake.description}</p>
+              <p class="wb-eyebrow">${escapeHtml(this.cake.category)}</p>
+              <h1 id="detail-title">${escapeHtml(this.cake.title)}</h1>
+              <div class="wb-detail__rating"><span aria-hidden="true">★</span><strong>${escapeHtml(this.cake.rating)}</strong><span>(${escapeHtml(this.cake.reviews)} reviews)</span></div>
+              <p class="wb-detail__description">${escapeHtml(this.cake.description)}</p>
 
               <div class="wb-detail__fact-row">
-                <div><span>Portion guide</span><strong>Serves ${this.cake.servings}</strong></div>
-                <div><span>Prepared</span><strong>To order</strong></div>
+                <div><span>Portion guide</span><strong>Serves ${escapeHtml(this.cake.servings)}</strong></div>
+                <div><span>Prepared</span><strong>Freshly to order</strong></div>
               </div>
 
               <div class="wb-detail__choice-block">
@@ -110,15 +134,15 @@ export class SingleCakeDetail {
               </div>
 
               <div class="wb-detail__price-row">
-                <div><span>Price for this selection</span><strong id="detail-calculated-price">₹${Math.round(computedPrice).toLocaleString('en-IN')}</strong></div>
-                <span class="wb-detail__delivery-note"><span class="material-symbols-outlined" aria-hidden="true">ac_unit</span> Chilled delivery</span>
+                <div><span>Price for this selection</span><strong id="detail-calculated-price">${formatINR(computedPrice)}</strong></div>
+                <span class="wb-detail__delivery-note"><span class="material-symbols-outlined" aria-hidden="true">ac_unit</span> Chilled Bhubaneswar delivery</span>
               </div>
 
               <div class="wb-detail__actions">
                 <button id="detail-add-cart-btn" class="wb-button wb-button--primary" type="button"><span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>Add to bag</button>
                 <button id="detail-customize-3d-btn" class="wb-button wb-button--outline" type="button"><span class="material-symbols-outlined" aria-hidden="true">view_in_ar</span>Customise in 3D</button>
               </div>
-              <p class="wb-detail__footnote">For custom designs, use the cake studio to choose flavours, tiers, and finishing details.</p>
+              <p class="wb-detail__footnote">Want to change the tiers, colours, or flavours? Open it in the 3D cake studio.</p>
             </div>
           </div>
         </div>
@@ -129,6 +153,13 @@ export class SingleCakeDetail {
   }
 
   attachEvents() {
+    this.container.querySelectorAll('.wb-detail__thumb').forEach(btn => {
+      btn.addEventListener('click', event => {
+        this.activeImageIndex = parseInt(event.currentTarget.dataset.imgIdx, 10) || 0;
+        this.render();
+      });
+    });
+
     this.container.querySelectorAll('.wb-detail__size').forEach(button => {
       button.addEventListener('click', event => {
         this.selectedSize = event.currentTarget.dataset.size;
@@ -142,6 +173,7 @@ export class SingleCakeDetail {
         this.render();
       }
     });
+
     this.container.querySelector('#detail-qty-inc')?.addEventListener('click', () => {
       this.selectedPortion++;
       this.render();
@@ -150,17 +182,24 @@ export class SingleCakeDetail {
     this.container.querySelector('#detail-customize-3d-btn')?.addEventListener('click', () => {
       if (this.onCustomizeSimilar) this.onCustomizeSimilar(this.cake);
     });
+
     this.container.querySelector('#detail-add-cart-btn')?.addEventListener('click', () => {
-      const sizeMultiplier = this.selectedSize === '3lb' ? 1.5 : (this.selectedSize === '0.5lb' ? 0.6 : 1.0);
+      const sizeMultiplier = PRESET_SIZE_MULTIPLIERS[this.selectedSize] || 1.0;
+      const unitPrice = Math.round(this.cake.price * sizeMultiplier);
       if (this.onAddToCart) {
         this.onAddToCart({
           item_type: 'preset',
           cake_id: this.cake.id,
+          size: this.selectedSize,
           title: `${this.cake.title} (${this.selectedSize})`,
           quantity: this.selectedPortion,
-          unit_price: this.cake.price * sizeMultiplier
+          unit_price: unitPrice
         });
       }
     });
+  }
+
+  destroy() {
+    this.isDestroyed = true;
   }
 }

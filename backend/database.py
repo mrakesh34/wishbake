@@ -50,6 +50,10 @@ def init_db():
         inspector = inspect(engine)
         additions = {
             "users": {"password_hash": "VARCHAR(255)"},
+            "otps": {
+                "password_hash": "VARCHAR(255)",
+                "locked_until": "DOUBLE PRECISION",
+            },
             "orders": {
                 "user_id": "VARCHAR(50)",
                 "delivery_fee": "FLOAT NOT NULL DEFAULT 149",
@@ -63,17 +67,23 @@ def init_db():
                 for name, definition in columns.items():
                     if name not in existing:
                         connection.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {definition}"))
+
+            otp_columns = {column["name"]: column for column in inspector.get_columns("otps")}
+            otp_code_col = otp_columns.get("otp_code")
+            otp_code_len = getattr(otp_code_col["type"], "length", None) if otp_code_col else None
+            if otp_code_len is not None and otp_code_len < 255:
+                connection.execute(text("ALTER TABLE otps ALTER COLUMN otp_code TYPE VARCHAR(255)"))
     except Exception as e:
         raise RuntimeError("Configured PostgreSQL database is unavailable; refusing to use local SQLite.") from e
 
-    # Seed initial cakes catalog if empty
+    # Seed and sync initial cakes catalog so category/metadata updates apply to existing DB rows
     db = SessionLocal()
     try:
-        cake_count = db.query(CakeDB).count()
-        if cake_count == 0:
-            logger.info("Seeding initial Artisanal Bakery Catalog into database...")
-            for cake in PRESET_CAKES:
-                db_cake = CakeDB(
+        existing_cakes = {c.id: c for c in db.query(CakeDB).all()}
+        for cake in PRESET_CAKES:
+            db_cake = existing_cakes.get(cake["id"])
+            if db_cake is None:
+                db.add(CakeDB(
                     id=cake["id"],
                     title=cake["title"],
                     category=cake["category"],
@@ -86,12 +96,23 @@ def init_db():
                     weight_lbs=cake.get("weight_lbs", 1.0),
                     rating=cake.get("rating", 5.0),
                     reviews=cake.get("reviews", 100)
-                )
-                db.add(db_cake)
-            db.commit()
-            logger.info("Catalog seeded successfully!")
+                ))
+            else:
+                db_cake.title = cake["title"]
+                db_cake.category = cake["category"]
+                db_cake.price = cake["price"]
+                db_cake.description = cake["description"]
+                db_cake.image = cake["image"]
+                db_cake.images = cake.get("images", [])
+                db_cake.badge = cake.get("badge")
+                db_cake.servings = cake.get("servings", "8-10")
+                db_cake.weight_lbs = cake.get("weight_lbs", 1.0)
+                db_cake.rating = cake.get("rating", 5.0)
+                db_cake.reviews = cake.get("reviews", 100)
+        db.commit()
+        logger.info("Catalog synced successfully (%d cakes).", len(PRESET_CAKES))
     except Exception as e:
-        logger.error(f"Failed to seed catalog: {e}")
+        logger.error(f"Failed to seed/sync catalog: {e}")
         db.rollback()
     finally:
         db.close()
