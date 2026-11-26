@@ -529,10 +529,7 @@ export class CartDrawer {
   }
 
   async processOnlineOrderPayment(orderData, authToken) {
-    const checkoutResult = await launchOnlineCheckout(
-      orderData.payment_session_id,
-      orderData.gateway_mode || orderData.payment_gateway_env
-    );
+    const checkoutResult = await launchOnlineCheckout(orderData.payment_session_id);
 
     if (checkoutResult.outcome === 'redirect') {
       return;

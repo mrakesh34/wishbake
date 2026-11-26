@@ -71,7 +71,7 @@ def get_public_payment_config():
     except PaymentGatewayConfigError:
         return OnlinePaymentConfigResponse(
             configured=False,
-            mode="sandbox",
+            mode="production",
             api_version="2026-01-01",
             sdk_url=sdk_meta["sdk_url"],
             sdk_global=sdk_meta["sdk_global"],
@@ -159,7 +159,7 @@ async def payment_webhook(
     ).strip().lower() in {"1", "true", "yes"}
     if enforce_ip:
         client_ip = _get_client_ip(request)
-        if not is_allowed_webhook_ip(client_ip, cfg.mode):
+        if not is_allowed_webhook_ip(client_ip):
             logger.warning("Rejected payment webhook from unwhitelisted IP %s", client_ip)
             raise HTTPException(status_code=403, detail="Forbidden webhook source IP.")
 

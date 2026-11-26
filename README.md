@@ -1,6 +1,6 @@
 # WISHBAKE
 
-Premium custom-cake storefront for delivery in Bhubaneswar, Odisha. Customers can browse cakes, customize a cake in 3D, keep an account-backed cart, and place INR orders with Cash on Delivery or Online Payment (supporting both Sandbox/Test and Production/Live environments).
+Premium custom-cake storefront for delivery in Bhubaneswar, Odisha. Customers can browse cakes, customize a cake in 3D, keep an account-backed cart, and place INR orders with Cash on Delivery or Online Payment.
 
 ## Start locally
 

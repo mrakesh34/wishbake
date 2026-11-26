@@ -129,25 +129,21 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
         app.dependency_overrides.clear()
         payments_route.SessionLocal = self._orig_payments_session_local
 
-    def test_config_supports_both_sandbox_and_production_and_blocks_mismatch(self):
-        env_both = {
-            "CASHFREE_ENV": "sandbox",
-            "CASHFREE_SANDBOX_APP_ID": "TEST123456",
-            "CASHFREE_SANDBOX_SECRET_KEY": "gw_ma_test_secret",
+    def test_config_enforces_production_only_and_rejects_sandbox(self):
+        env_live = {
+            "CASHFREE_ENV": "production",
             "CASHFREE_LIVE_APP_ID": "PROD999999",
             "CASHFREE_LIVE_SECRET_KEY": "gw_ma_prod_secret",
         }
-        with patch.dict(os.environ, env_both, clear=False):
-            sb_cfg = get_gateway_config()
-            self.assertEqual(sb_cfg.mode, "sandbox")
-            self.assertIn("sandbox", sb_cfg.base_url)
-            self.assertEqual(sb_cfg.app_id, "TEST123456")
-
-        with patch.dict(os.environ, {**env_both, "CASHFREE_ENV": "live"}, clear=False):
+        with patch.dict(os.environ, env_live, clear=False):
             prod_cfg = get_gateway_config()
             self.assertEqual(prod_cfg.mode, "production")
-            self.assertIn("api.", prod_cfg.base_url)
+            self.assertIn("https://api.", prod_cfg.base_url)
             self.assertEqual(prod_cfg.app_id, "PROD999999")
+
+        with patch.dict(os.environ, {**env_live, "CASHFREE_ENV": "sandbox"}, clear=False):
+            with self.assertRaises(PaymentGatewayConfigError):
+                get_gateway_config()
 
         mismatch_env = {
             "CASHFREE_ENV": "production",
@@ -162,19 +158,21 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
 
     def test_public_config_endpoint_never_leaks_secrets(self):
         env = {
-            "CASHFREE_ENV": "test",
-            "CASHFREE_APP_ID": "TEST_APP_ABC",
-            "CASHFREE_SECRET_KEY": "gw_test_super_secret",
+            "CASHFREE_ENV": "production",
+            "CASHFREE_APP_ID": "PROD_APP_ABC",
+            "CASHFREE_SECRET_KEY": "gw_prod_super_secret",
+            "CASHFREE_LIVE_APP_ID": "",
+            "CASHFREE_LIVE_SECRET_KEY": "",
         }
         with patch.dict(os.environ, env, clear=False):
             res = self.client.get("/api/payments/online/config")
             self.assertEqual(res.status_code, 200)
             body = res.json()
-            self.assertEqual(body["mode"], "sandbox")
+            self.assertEqual(body["mode"], "production")
             self.assertTrue(body["configured"])
             self.assertTrue(body["sdk_url"].startswith("https://"))
             self.assertTrue(bool(body["sdk_global"]))
-            self.assertNotIn("TEST_APP_ABC", res.text)
+            self.assertNotIn("PROD_APP_ABC", res.text)
             self.assertNotIn("super_secret", res.text)
 
     def test_sanitize_phone(self):
@@ -219,9 +217,11 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
             )
 
         env = {
-            "CASHFREE_ENV": "sandbox",
-            "CASHFREE_APP_ID": "TEST_APP",
-            "CASHFREE_SECRET_KEY": "gw_test_secret",
+            "CASHFREE_ENV": "production",
+            "CASHFREE_APP_ID": "PROD_APP",
+            "CASHFREE_SECRET_KEY": "gw_prod_secret",
+            "CASHFREE_LIVE_APP_ID": "",
+            "CASHFREE_LIVE_SECRET_KEY": "",
             "FRONTEND_URL": "https://wishbake.vercel.app",
             "BACKEND_URL": "https://wishbake-api.onrender.com",
         }
@@ -242,7 +242,7 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
         self.assertEqual(data["payment_status"], "PENDING")
         self.assertEqual(data["payment_method"], "ONLINE")
         self.assertEqual(data["payment_session_id"], "session_test_abc123")
-        self.assertEqual(data["gateway_mode"], "sandbox")
+        self.assertEqual(data["gateway_mode"], "production")
 
         self.assertEqual(captured["headers"]["x-api-version"], "2026-01-01")
         self.assertEqual(captured["json"]["order_amount"], 1948.0)
@@ -275,7 +275,7 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
                     delivery_fee=149.0,
                     payment_method="ONLINE",
                     payment_status="PENDING",
-                    payment_gateway_env="sandbox",
+                    payment_gateway_env="production",
                     payment_session_id="session_123",
                     status="AWAITING_PAYMENT",
                     items=[],
@@ -287,9 +287,11 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
             db.close()
 
         env = {
-            "CASHFREE_ENV": "sandbox",
-            "CASHFREE_APP_ID": "TEST_APP",
-            "CASHFREE_SECRET_KEY": "gw_test_secret",
+            "CASHFREE_ENV": "production",
+            "CASHFREE_APP_ID": "PROD_APP",
+            "CASHFREE_SECRET_KEY": "gw_prod_secret",
+            "CASHFREE_LIVE_APP_ID": "",
+            "CASHFREE_LIVE_SECRET_KEY": "",
         }
 
         with patch.dict(os.environ, env, clear=False):
@@ -380,7 +382,7 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
             db.close()
 
     def test_webhook_signature_raw_body_replay_and_idempotency(self):
-        secret = "gw_test_webhook_secret"
+        secret = "gw_prod_webhook_secret"
         db = self.TestingSessionLocal()
         try:
             db.add(
@@ -395,7 +397,7 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
                     delivery_fee=149.0,
                     payment_method="ONLINE",
                     payment_status="PENDING",
-                    payment_gateway_env="sandbox",
+                    payment_gateway_env="production",
                     status="AWAITING_PAYMENT",
                     items=[],
                     user_id="user-1",
@@ -413,9 +415,11 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
         sig = sign_gateway_webhook(ts_ms, raw_body, secret)
 
         env = {
-            "CASHFREE_ENV": "sandbox",
-            "CASHFREE_APP_ID": "TEST_APP",
+            "CASHFREE_ENV": "production",
+            "CASHFREE_APP_ID": "PROD_APP",
             "CASHFREE_SECRET_KEY": secret,
+            "CASHFREE_LIVE_APP_ID": "",
+            "CASHFREE_LIVE_SECRET_KEY": "",
         }
 
         def fake_paid(method, url, headers=None, json=None):
@@ -481,7 +485,7 @@ class OnlinePaymentIntegrationTests(unittest.TestCase):
             db.close()
 
     def test_verify_signature_rejects_reformatted_json(self):
-        secret = "gw_test_secret"
+        secret = "gw_prod_secret"
         raw_body = b'{"order_amount":170.00}'
         ts = str(int(time.time() * 1000))
         sig = sign_gateway_webhook(ts, raw_body, secret)

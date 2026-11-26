@@ -234,7 +234,7 @@ class OrderResponse(BaseModel):
 
 class OnlinePaymentConfigResponse(BaseModel):
     configured: bool
-    mode: Literal["sandbox", "production"]
+    mode: Literal["production"] = "production"
     api_version: str
     sdk_url: str
     sdk_global: str

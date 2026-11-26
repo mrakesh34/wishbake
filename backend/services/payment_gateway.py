@@ -18,20 +18,17 @@ from backend.db_models import CartDB, OrderDB
 logger = logging.getLogger("wishbake.payments")
 
 IST = timezone(timedelta(hours=5, minutes=30))
-_GATEWAY_HOSTS = {
-    "sandbox": "https://" + "sandbox.cashfree.com/pg",
-    "production": "https://" + "api.cashfree.com/pg",
-}
+PRODUCTION_MODE = "production"
+_PRODUCTION_BASE_URL = "https://" + "api.cashfree.com/pg"
 _CHECKOUT_SCRIPT_URL = "https://" + "sdk.cashfree.com/js/v3/cashfree.js"
 _CHECKOUT_GLOBAL_NAME = "Cash" + "free"
 DEFAULT_API_VERSION = "2026-01-01"
-SANDBOX_WEBHOOK_IPS = {"52.66.25.127", "15.206.45.168"}
 PRODUCTION_WEBHOOK_IPS = {"52.66.101.190", "3.109.102.144", "18.60.134.245", "18.60.183.142"}
 MAX_GATEWAY_ORDER_INR = 1_000_000.0
 
 
 class PaymentGatewayConfigError(RuntimeError):
-    """Raised when payment gateway environment or credential settings are missing or mismatched."""
+    """Raised when payment gateway environment or credential settings are missing or invalid."""
 
 
 class PaymentGatewayAPIError(RuntimeError):
@@ -45,7 +42,7 @@ class PaymentGatewayAPIError(RuntimeError):
 
 @dataclass(frozen=True)
 class GatewayConfig:
-    mode: str  # "sandbox" | "production"
+    mode: str
     base_url: str
     app_id: str
     secret_key: str
@@ -65,28 +62,24 @@ def _env_first(*names: str, default: str = "") -> str:
 
 
 def normalize_gateway_mode(raw_mode: Optional[str] = None) -> str:
-    """Resolve PAYMENT_GATEWAY_ENV / CASHFREE_ENV / ENVIRONMENT into 'sandbox' or 'production'."""
+    """Validate payment gateway mode, allowing only live/production."""
     value = (raw_mode or _env_first("PAYMENT_GATEWAY_ENV", "CASHFREE_ENV")).strip().lower()
-    if value in {"production", "prod", "live"}:
-        return "production"
     if value in {"sandbox", "test", "staging", "dev", "development"}:
-        return "sandbox"
-    app_env = os.getenv("ENVIRONMENT", "development").strip().lower()
-    has_live_key = bool(_env_first("PAYMENT_GATEWAY_LIVE_APP_ID", "CASHFREE_LIVE_APP_ID"))
-    return "production" if app_env == "production" and has_live_key else "sandbox"
+        raise PaymentGatewayConfigError(
+            "Sandbox/test payment mode is disabled; only live/production mode is supported."
+        )
+    return PRODUCTION_MODE
 
 
-def _resolve_credentials_for_mode(mode: str) -> tuple[str, str]:
-    if mode == "production":
-        live_id = _env_first("PAYMENT_GATEWAY_LIVE_APP_ID", "CASHFREE_LIVE_APP_ID", "CASHFREE_PROD_APP_ID")
-        live_secret = _env_first("PAYMENT_GATEWAY_LIVE_SECRET_KEY", "CASHFREE_LIVE_SECRET_KEY", "CASHFREE_PROD_SECRET_KEY")
-        if live_id and live_secret:
-            return live_id, live_secret
-    else:
-        sb_id = _env_first("PAYMENT_GATEWAY_SANDBOX_APP_ID", "CASHFREE_SANDBOX_APP_ID", "CASHFREE_TEST_APP_ID")
-        sb_secret = _env_first("PAYMENT_GATEWAY_SANDBOX_SECRET_KEY", "CASHFREE_SANDBOX_SECRET_KEY", "CASHFREE_TEST_SECRET_KEY")
-        if sb_id and sb_secret:
-            return sb_id, sb_secret
+def _resolve_production_credentials() -> tuple[str, str]:
+    live_id = _env_first("PAYMENT_GATEWAY_LIVE_APP_ID", "CASHFREE_LIVE_APP_ID", "CASHFREE_PROD_APP_ID")
+    live_secret = _env_first(
+        "PAYMENT_GATEWAY_LIVE_SECRET_KEY",
+        "CASHFREE_LIVE_SECRET_KEY",
+        "CASHFREE_PROD_SECRET_KEY",
+    )
+    if live_id and live_secret:
+        return live_id, live_secret
 
     return (
         _env_first("PAYMENT_GATEWAY_APP_ID", "CASHFREE_APP_ID"),
@@ -94,36 +87,28 @@ def _resolve_credentials_for_mode(mode: str) -> tuple[str, str]:
     )
 
 
-def _validate_mode_credential_match(mode: str, app_id: str, secret_key: str) -> None:
+def _validate_production_credentials(app_id: str, secret_key: str) -> None:
     if not app_id or not secret_key:
         return
     upper_id = app_id.upper()
     lower_secret = secret_key.lower()
-    looks_sandbox = upper_id.startswith("TEST") or "_test_" in lower_secret
-    looks_prod = upper_id.startswith("PROD_") or "_prod_" in lower_secret
-
-    if mode == "production" and looks_sandbox:
+    if upper_id.startswith("TEST") or "_test_" in lower_secret:
         raise PaymentGatewayConfigError(
-            "Payment gateway is set to production, but test/sandbox credentials are active."
-        )
-    if mode == "sandbox" and looks_prod:
-        raise PaymentGatewayConfigError(
-            "Payment gateway is set to sandbox, but live/production credentials are active."
+            "Live/production credentials are required; test/sandbox credentials are not accepted."
         )
 
 
 def get_gateway_config(mode_override: Optional[str] = None, require_configured: bool = True) -> GatewayConfig:
-    """Build and validate online payment gateway configuration from environment variables."""
+    """Build and validate live/production online payment gateway configuration from environment variables."""
     mode = normalize_gateway_mode(mode_override)
-    base_url = _GATEWAY_HOSTS[mode]
-    app_id, secret_key = _resolve_credentials_for_mode(mode)
+    app_id, secret_key = _resolve_production_credentials()
     api_version = _env_first("PAYMENT_GATEWAY_API_VERSION", "CASHFREE_API_VERSION", default=DEFAULT_API_VERSION)
 
-    _validate_mode_credential_match(mode, app_id, secret_key)
+    _validate_production_credentials(app_id, secret_key)
 
     cfg = GatewayConfig(
         mode=mode,
-        base_url=base_url,
+        base_url=_PRODUCTION_BASE_URL,
         app_id=app_id,
         secret_key=secret_key,
         api_version=api_version,
@@ -322,9 +307,8 @@ def verify_webhook_signature(
     return True, "ok"
 
 
-def is_allowed_webhook_ip(client_ip: str, mode: str) -> bool:
-    allowed = PRODUCTION_WEBHOOK_IPS if mode == "production" else SANDBOX_WEBHOOK_IPS
-    return client_ip in allowed
+def is_allowed_webhook_ip(client_ip: str) -> bool:
+    return client_ip in PRODUCTION_WEBHOOK_IPS
 
 
 def _select_latest_payment(payments: list[dict[str, Any]]) -> Optional[dict[str, Any]]:
@@ -341,9 +325,8 @@ def reconcile_order_with_gateway(db: Session, order: OrderDB) -> tuple[OrderDB, 
     Re-fetch authoritative order and payment state from the payment gateway and update OrderDB + CartDB idempotently.
     Never transitions a PAID order back to pending/failed.
     """
-    mode_hint = order.payment_gateway_env or None
-    gw_order = fetch_gateway_order(order.order_id, mode_override=mode_hint)
-    payments = fetch_gateway_payments(order.order_id, mode_override=mode_hint)
+    gw_order = fetch_gateway_order(order.order_id)
+    payments = fetch_gateway_payments(order.order_id)
 
     gw_order_status = str(gw_order.get("order_status") or "ACTIVE").upper()
     gw_order_id = gw_order.get("cf_order_id")

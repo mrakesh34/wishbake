@@ -1,16 +1,13 @@
 import { apiUrl } from './api.js';
 import { resolveApiError } from '../utils/ui.js';
 
-const EXPLICIT_ENV_MODE = (import.meta.env.VITE_PAYMENT_MODE || '').trim().toLowerCase();
-const DEFAULT_MODE = EXPLICIT_ENV_MODE === 'production' || EXPLICIT_ENV_MODE === 'live'
-  ? 'production'
-  : 'sandbox';
+const PRODUCTION_MODE = 'production';
 
 let sdkInstance = null;
 let initializedMode = null;
 let gatewayConfig = {
   configured: false,
-  mode: DEFAULT_MODE,
+  mode: PRODUCTION_MODE,
   sdkUrl: '',
   sdkGlobal: '',
   loaded: false
@@ -67,10 +64,9 @@ export async function initPaymentGateway() {
       const res = await fetch(apiUrl('/api/payments/online/config'));
       if (res.ok) {
         const data = await res.json();
-        const serverMode = data?.mode === 'production' ? 'production' : 'sandbox';
         gatewayConfig = {
           configured: Boolean(data?.configured),
-          mode: EXPLICIT_ENV_MODE ? DEFAULT_MODE : serverMode,
+          mode: PRODUCTION_MODE,
           sdkUrl: data?.sdk_url || '',
           sdkGlobal: data?.sdk_global || '',
           loaded: true
@@ -93,7 +89,7 @@ export async function initPaymentGateway() {
 /**
  * Launch the online checkout modal and normalize the 3-state promise resolution.
  */
-export async function launchOnlineCheckout(paymentSessionId, modeOverride = null) {
+export async function launchOnlineCheckout(paymentSessionId) {
   if (!paymentSessionId) {
     return {
       outcome: 'error',
@@ -103,11 +99,7 @@ export async function launchOnlineCheckout(paymentSessionId, modeOverride = null
 
   await initPaymentGateway();
 
-  const targetMode = modeOverride === 'production' || modeOverride === 'sandbox'
-    ? modeOverride
-    : gatewayConfig.mode;
-
-  const sdk = createSdkInstance(targetMode);
+  const sdk = createSdkInstance(PRODUCTION_MODE);
   if (!sdk) {
     return {
       outcome: 'error',

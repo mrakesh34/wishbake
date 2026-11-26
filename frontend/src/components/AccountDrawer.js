@@ -324,10 +324,7 @@ export class AccountDrawer {
       }
 
       this.close();
-      const checkoutResult = await launchOnlineCheckout(
-        orderData.payment_session_id,
-        orderData.gateway_mode || orderData.payment_gateway_env
-      );
+      const checkoutResult = await launchOnlineCheckout(orderData.payment_session_id);
       if (checkoutResult.outcome === 'redirect') return;
       if (checkoutResult.outcome === 'cancelled' || checkoutResult.outcome === 'error') {
         showToast(checkoutResult.message, checkoutResult.outcome === 'error' ? 'error' : 'info', 4500);
