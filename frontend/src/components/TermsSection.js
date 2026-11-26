@@ -5,7 +5,7 @@ export function renderMinimalTermsSection(prefix = 'wb') {
         <div class="wb-terms__head">
           <p class="wb-eyebrow">Terms &amp; Policies</p>
           <h2 id="${prefix}-terms-title">Terms &amp; Conditions</h2>
-          <p>WISHBAKE Bakery &amp; Cake Studio · Bhubaneswar, Odisha · Support: <a href="mailto:concierge@wishbake.com">concierge@wishbake.com</a></p>
+          <p>WISHBAKE Bakery &amp; Cake Studio · Bhubaneswar, Odisha · Support: <a href="mailto:djdahibara@gmail.com">djdahibara@gmail.com</a></p>
         </div>
         <div class="wb-terms__grid">
           <article class="wb-terms__item">

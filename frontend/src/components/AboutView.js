@@ -65,7 +65,7 @@ export class AboutView {
           <div class="wb-page-width wb-about__contact-inner">
             <p class="wb-eyebrow">A special order in mind?</p>
             <h2>Tell us what you’re<br /><em>celebrating.</em></h2>
-            <a href="mailto:concierge@wishbake.com" class="wb-text-link">Write to the bakery <span aria-hidden="true">↗</span></a>
+            <a href="mailto:djdahibara@gmail.com" class="wb-text-link">Write to the bakery <span aria-hidden="true">↗</span></a>
           </div>
         </section>
 
