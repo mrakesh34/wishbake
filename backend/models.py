@@ -127,7 +127,7 @@ class CreateOrderRequest(BaseModel):
     delivery_time_slot: Optional[str] = Field(default="afternoon", description="morning, afternoon, evening, night")
     recipient_name: Optional[str] = Field(default=None, description="Name of the person receiving the cake")
     special_instructions: Optional[str] = None
-    payment_method: Literal["COD", "CASHFREE"] = "COD"
+    payment_method: Literal["COD", "ONLINE"] = "COD"
     items: List[OrderItem] = Field(min_length=1)
 
     @field_validator("customer_name")
@@ -217,6 +217,13 @@ class OrderResponse(BaseModel):
     delivery_fee: float = 149.0
     payment_method: str = "COD"
     payment_status: str = "PENDING"
+    gateway_order_id: Optional[str] = None
+    payment_session_id: Optional[str] = None
+    gateway_payment_id: Optional[str] = None
+    payment_gateway_env: Optional[str] = None
+    gateway_mode: Optional[str] = None
+    payment_message: Optional[str] = None
+    paid_at: Optional[str] = None
     currency: str = "INR"
     status: str
     created_at: str
@@ -224,6 +231,53 @@ class OrderResponse(BaseModel):
     delivery_time_slot: Optional[str] = None
     delivery_address: str
     items: List[OrderItem]
+
+class OnlinePaymentConfigResponse(BaseModel):
+    configured: bool
+    mode: Literal["sandbox", "production"]
+    api_version: str
+    sdk_url: str
+    sdk_global: str
+
+class PaymentVerifyRequest(BaseModel):
+    order_id: str = Field(min_length=3, max_length=64)
+
+class PaymentStatusResponse(BaseModel):
+    order: OrderResponse
+    order_status: str
+    payment_status: str
+    payment_message: Optional[str] = None
+    error_code: Optional[str] = None
+    error_reason: Optional[str] = None
+
+
+def serialize_order_response(order, gateway_mode: Optional[str] = None) -> OrderResponse:
+    """Convert an OrderDB ORM row into the API OrderResponse contract."""
+    normalized_method = "COD" if order.payment_method == "COD" else "ONLINE"
+    return OrderResponse(
+        order_id=order.order_id,
+        customer_name=order.customer_name,
+        customer_email=order.customer_email,
+        customer_phone=order.customer_phone,
+        delivery_address=order.delivery_address,
+        delivery_date=order.delivery_date,
+        delivery_time_slot=order.delivery_time_slot,
+        total_amount=order.total_amount,
+        delivery_fee=order.delivery_fee,
+        payment_method=normalized_method,
+        payment_status=order.payment_status,
+        gateway_order_id=order.cf_order_id,
+        payment_session_id=order.payment_session_id,
+        gateway_payment_id=order.cf_payment_id,
+        payment_gateway_env=order.payment_gateway_env,
+        gateway_mode=gateway_mode or order.payment_gateway_env,
+        payment_message=order.payment_message,
+        paid_at=order.paid_at,
+        currency=order.currency or "INR",
+        status=order.status,
+        created_at=order.created_at,
+        items=order.items or [],
+    )
 
 # --- Authentication & User Models ---
 
@@ -300,7 +354,6 @@ class SendOtpResponse(BaseModel):
     message: str
     expires_in_seconds: int = 600
     resend_cooldown_seconds: int = 60
-    dev_otp: Optional[str] = None # Populated only in local development fallback mode
 
 class ResendOtpRequest(BaseModel):
     email: str = Field(min_length=3, max_length=255)

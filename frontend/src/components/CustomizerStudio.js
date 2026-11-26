@@ -10,19 +10,11 @@ const PRESET_CAKE_INSPIRATIONS = {
   'cake-lotus-biscoff': { tiers: 1, shape: 'round', size: '2lb', base_frosting: 'textured', sponge_flavor: 'butterscotch', filling_flavor: 'dulce', icing_color: '#d9a468', piping_style: 'drip', toppings: ['choco_truffles'] },
   'cake-gulab-cheesecake': { tiers: 1, shape: 'round', size: '2lb', base_frosting: 'semi-naked', sponge_flavor: 'saffron', filling_flavor: 'gulab_jamun', icing_color: '#f8dfd2', piping_style: 'pearl', toppings: ['gold_leaf', 'marigolds'] },
   'cake-marigold-elegance': { tiers: 2, shape: 'round', size: '3lb', base_frosting: 'smooth', sponge_flavor: 'saffron', filling_flavor: 'rabri', icing_color: '#fbf4e3', piping_style: 'pearl', toppings: ['gold_leaf', 'marigolds'] },
-  'cake-rose-pistachio': { tiers: 1, shape: 'round', size: '1lb', base_frosting: 'smooth', sponge_flavor: 'pistachio', filling_flavor: 'cream', icing_color: '#f2c1cc', piping_style: 'rosette', toppings: ['floral_roses', 'praline_nuts'] },
   'cake-wishbake-signature': { tiers: 1, shape: 'heart', size: '2lb', base_frosting: 'smooth', sponge_flavor: 'vanilla', filling_flavor: 'raspberry', icing_color: '#d4838f', piping_style: 'pearl', toppings: ['gold_leaf', 'berries'] },
   'cake-dark-truffle': { tiers: 1, shape: 'round', size: '2lb', base_frosting: 'mirror_glaze', sponge_flavor: 'chocolate', filling_flavor: 'dark_choc', icing_color: '#331b18', piping_style: 'none', toppings: ['macarons', 'choco_truffles'] },
-  'cake-citrus-berry-bliss': { tiers: 1, shape: 'round', size: '1lb', base_frosting: 'semi-naked', sponge_flavor: 'vanilla', filling_flavor: 'white_choc', icing_color: '#fbf4e3', piping_style: 'shell', toppings: ['berries'] },
   'cake-rasmalai-royale': { tiers: 4, shape: 'round', size: '10lb', base_frosting: 'fondant', sponge_flavor: 'rasmalai', filling_flavor: 'rabri', icing_color: '#faebc2', piping_style: 'mehndi', toppings: ['gold_leaf', 'marigolds', 'praline_nuts'] },
   'cake-butterscotch-crunch': { tiers: 1, shape: 'round', size: '1lb', base_frosting: 'textured', sponge_flavor: 'butterscotch', filling_flavor: 'dulce', icing_color: '#e5b869', piping_style: 'shell', toppings: ['praline_nuts'] },
-  'cake-black-forest-classic': { tiers: 1, shape: 'round', size: '1lb', base_frosting: 'smooth', sponge_flavor: 'black_forest', filling_flavor: 'cream', icing_color: '#ffffff', piping_style: 'drip', toppings: ['choco_truffles', 'berries'] },
-  'cake-paan-delight': { tiers: 1, shape: 'hexagon', size: '2lb', base_frosting: 'smooth', sponge_flavor: 'paan', filling_flavor: 'rabri', icing_color: '#9db389', piping_style: 'pearl', toppings: ['floral_roses', 'gold_leaf'] },
-  'cake-redvelvet-cheesecake': { tiers: 1, shape: 'heart', size: '2lb', base_frosting: 'smooth', sponge_flavor: 'red_velvet', filling_flavor: 'white_choc', icing_color: '#ffffff', piping_style: 'pearl', toppings: ['berries', 'floral_roses'] },
-  'cake-mishti-doi': { tiers: 1, shape: 'round', size: '2lb', base_frosting: 'textured', sponge_flavor: 'butterscotch', filling_flavor: 'rabri', icing_color: '#e8c499', piping_style: 'none', toppings: ['praline_nuts', 'gold_leaf'] },
-  'cake-anjeer-badam': { tiers: 1, shape: 'square', size: '2lb', base_frosting: 'smooth', sponge_flavor: 'saffron', filling_flavor: 'kaju_praline', icing_color: '#fbf4e3', piping_style: 'shell', toppings: ['praline_nuts', 'gold_leaf'] },
-  'cake-saffron-rose-grand': { tiers: 3, shape: 'round', size: '8lb', base_frosting: 'fondant', sponge_flavor: 'saffron', filling_flavor: 'gulab_jamun', icing_color: '#f2c8ce', piping_style: 'mehndi', toppings: ['gold_leaf', 'floral_roses', 'acrylic_topper'] },
-  'cake-banoffee-crunch': { tiers: 1, shape: 'round', size: '2lb', base_frosting: 'textured', sponge_flavor: 'butterscotch', filling_flavor: 'dulce', icing_color: '#d9a468', piping_style: 'drip', toppings: ['choco_truffles'] }
+  'cake-saffron-rose-grand': { tiers: 3, shape: 'round', size: '8lb', base_frosting: 'fondant', sponge_flavor: 'saffron', filling_flavor: 'gulab_jamun', icing_color: '#f2c8ce', piping_style: 'mehndi', toppings: ['gold_leaf', 'floral_roses', 'acrylic_topper'] }
 };
 
 const SHAPE_SVGS = {

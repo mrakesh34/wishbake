@@ -1078,6 +1078,10 @@ input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="
 .wb-order-card__id { font-family: ui-monospace, monospace; font-size: 13px; font-weight: 700; color: var(--wb-berry); }
 .wb-order-card__date { margin: 2px 0 0; font-size: 12px; color: var(--wb-muted); }
 .wb-order-card__status { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; background: var(--wb-success-bg); color: var(--wb-success-ink); font-size: 12px; font-weight: 700; }
+.wb-order-card__status.is-pending { background: var(--wb-warn-bg); color: var(--wb-warn-ink); }
+.wb-order-card__status.is-failed { background: var(--wb-error-bg); color: var(--wb-error-ink); }
+.wb-order-card__actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 6px; }
+.wb-order-card__actions .wb-button { flex: 1 1 0; min-height: 36px; padding: 8px 12px; font-size: 13px; }
 .wb-order-card__status .material-symbols-outlined { font-size: 15px; }
 .wb-order-card__items { display: flex; flex-direction: column; gap: 6px; }
 .wb-order-card__item { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }

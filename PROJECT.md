@@ -29,8 +29,8 @@ The API is at `http://127.0.0.1:8000`; API docs are at `/docs`; Vite is at `http
 - User profiles, saved addresses, carts, and orders are database-backed. Signed-in carts sync to the account. Guest checkout remains available, but guest carts are not synced across devices.
 - Neon/PostgreSQL is required through `backend/.env` → `DATABASE_URL`. The app fails startup if it is missing or if the database is unavailable; it must not use SQLite.
 - Prices and order currency are INR. The current catalog/options values are retained as rupee amounts; local-market price validation is a later task. The launch delivery area is Bhubaneswar, Odisha; address validation is deferred.
-- Cash on Delivery is the available checkout method and is saved with `payment_status=PENDING`. Online Payment is selectable in the UI but displays “Coming soon”; the API rejects online orders until a gateway is chosen and implemented.
-- Online gateway choice remains undecided (Razorpay or Cashfree).
+- Cash on Delivery is saved immediately with `status=CONFIRMED` and `payment_status=PENDING`.
+- Online Payment (`ONLINE`, UPI/Cards/NetBanking/Wallets) is implemented for both Sandbox (Test) and Production (Live) modes, with server-side order creation (`payment_session_id`), authoritative order verification (`GET /orders/{order_id}`), payment retry, and HMAC-SHA256 signed webhook handling with `x-idempotency-key` deduplication.
 - No admin/staff portal in this phase.
 
 ## API overview
@@ -42,6 +42,7 @@ The API is at `http://127.0.0.1:8000`; API docs are at `/docs`; Vite is at `http
 - `GET|PUT /api/auth/cart`
 - `PUT /api/auth/profile`, `GET /api/auth/orders`
 - `POST /api/orders`, `GET /api/orders/{id}` (authenticated owner only)
+- `GET /api/payments/online/config`, `POST /api/payments/online/verify`, `POST /api/payments/online/retry/{order_id}`, `POST /api/payments/online/webhook`
 
 ## Planned work
 
@@ -49,7 +50,7 @@ The API is at `http://127.0.0.1:8000`; API docs are at `/docs`; Vite is at `http
 2. Verify account, cart, order persistence and server-side authoritative pricing.
 3. Improve guest cart persistence and merge it into an account after sign-in.
 4. Define local delivery fee, lead time, and order status rules for Bhubaneswar.
-5. Choose Razorpay or Cashfree and implement payment creation, verification, and webhook handling.
+5. Switch payment gateway mode from `sandbox` to `production` with live credentials, domain whitelisting, and production webhook registration.
 6. Add production hardening (rate limits, password reset, secure cookie/token policy, migrations, backups), responsive/accessibility review, and deployment documentation.
 
 ## Important decisions
@@ -57,5 +58,5 @@ The API is at `http://127.0.0.1:8000`; API docs are at `/docs`; Vite is at `http
 - Target currency: INR.
 - Delivery area: Bhubaneswar, Odisha; no address validation for now.
 - Authentication: email + password sign-up gated by 6-digit email OTP verification (Brevo HTTPS API); email + password login for verified accounts.
-- Payment: not selected yet.
+- Payment: Cash on Delivery and Online Payment Gateway (Sandbox/Test & Production/Live).
 - Admin/staff tools: postponed.

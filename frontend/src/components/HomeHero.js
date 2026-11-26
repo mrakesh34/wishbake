@@ -10,7 +10,7 @@ const FEATURED_FLAGSHIPS = [
     rating: 4.9,
     servings: '35-45',
     price: 8999,
-    image: '/assets/images/rasmalai_royale_angle.jpg',
+    image: '/assets/images/rasmalai_royale_front.jpg',
     description: 'Three-tier rasmalai-infused sponge with saffron cream layers, hand-piped royal icing, edible gold leaf cascades, and roasted dry fruit garnish.'
   },
   {
@@ -119,7 +119,7 @@ export class HomeHero {
             <button id="hero-cta-customizer-btn" class="wb-button wb-button--light" type="button">Open the cake studio <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
           </div>
           <div class="wb-design-callout__visual">
-            <img src="/assets/images/saffron_rose_front.jpg" alt="Imperial 3-tier silver vark celebration cake crafted at WISHBAKE" loading="lazy" decoding="async" />
+            <img src="/assets/images/saffron_rose_front.jpg" alt="Imperial Saffron Rose 2-tier celebration cake crafted at WISHBAKE" loading="lazy" decoding="async" />
             <p class="wb-design-callout__hint"><span class="material-symbols-outlined" aria-hidden="true">view_in_ar</span>Live 3D configurator · 1 to 5 tiers</p>
           </div>
         </section>

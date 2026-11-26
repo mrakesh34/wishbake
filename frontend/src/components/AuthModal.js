@@ -6,7 +6,6 @@ export class AuthModal {
     this.onSuccess = onSuccessCallback;
     this.mode = 'login';
     this.pendingSignup = null;
-    this.devOtp = null;
     this.resendCooldown = 0;
     this.cooldownTimer = null;
     this.init();
@@ -160,7 +159,6 @@ export class AuthModal {
             email: result.email || credentials.email.toLowerCase(),
             password: credentials.password
           };
-          this.devOtp = result.dev_otp || null;
           this.mode = 'verify-otp';
           this.resendCooldown = Number(result.resend_cooldown_seconds || 60);
           this.render();
@@ -168,7 +166,6 @@ export class AuthModal {
         } else {
           await authManager.login(credentials);
           this.pendingSignup = null;
-          this.devOtp = null;
           this.close();
           const user = authManager.getUser();
           showToast('Signed in successfully.', 'success');
@@ -185,9 +182,6 @@ export class AuthModal {
 
   renderVerifyOtpView() {
     const emailSafe = escapeHtml(this.pendingSignup?.email || '');
-    const devNotice = this.devOtp
-      ? `<p class="wb-inline-notice">Local dev mode (Brevo API key not set): code is <strong class="wb-mono">${escapeHtml(this.devOtp)}</strong></p>`
-      : '';
 
     this.modalEl.innerHTML = `
       <div class="wb-modal wb-modal--compact wb-auth-modal">
@@ -201,7 +195,6 @@ export class AuthModal {
           We sent a verification code to <strong>${emailSafe}</strong>. It expires in 10 minutes.
         </p>
 
-        ${devNotice}
         <div id="auth-alert-box" class="wb-inline-notice is-error is-hidden" role="alert"></div>
         <div id="auth-status-box" class="wb-inline-notice is-success is-hidden" role="status"></div>
 
@@ -244,7 +237,6 @@ export class AuthModal {
 
     this.modalEl.querySelector('#auth-edit-signup').onclick = () => {
       this.mode = 'signup';
-      this.devOtp = null;
       this.render();
     };
 
@@ -259,16 +251,10 @@ export class AuthModal {
 
       try {
         const result = await authManager.resendSignupOtp(this.pendingSignup.email);
-        this.devOtp = result.dev_otp || null;
         this.resendCooldown = Number(result.resend_cooldown_seconds || 60);
-        if (this.devOtp) {
-          this.render();
-          this.startResendCooldown(this.resendCooldown);
-        } else {
-          statusBox.textContent = `A new verification code was sent to ${this.pendingSignup.email}.`;
-          statusBox.classList.remove('is-hidden');
-          this.startResendCooldown(this.resendCooldown);
-        }
+        statusBox.textContent = `A new verification code was sent to ${this.pendingSignup.email}.`;
+        statusBox.classList.remove('is-hidden');
+        this.startResendCooldown(this.resendCooldown);
       } catch (error) {
         alertBox.textContent = error.message;
         alertBox.classList.remove('is-hidden');
@@ -301,7 +287,6 @@ export class AuthModal {
           otp
         });
         this.pendingSignup = null;
-        this.devOtp = null;
         this.close();
         const user = authManager.getUser();
         showToast(`Welcome to WISHBAKE, ${user?.name || 'friend'}!`, 'success');
@@ -321,7 +306,6 @@ export class AuthModal {
   open() {
     this.mode = 'login';
     this.pendingSignup = null;
-    this.devOtp = null;
     this.resendCooldown = 0;
     this.render();
     this.modalEl.classList.remove('is-hidden');

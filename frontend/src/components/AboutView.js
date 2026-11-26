@@ -22,7 +22,7 @@ export class AboutView {
         <section class="wb-about__story" aria-labelledby="about-story-title">
           <div class="wb-page-width wb-about__story-grid">
             <figure class="wb-about__image">
-              <img src="/assets/images/gulab_cheesecake.jpg" alt="A saffron and rose finished celebration cake" loading="lazy" decoding="async" />
+              <img src="/assets/images/gulab_cheesecake.jpg" alt="Royal Gulab Jamun Cardamom Cheesecake crafted at WISHBAKE" loading="lazy" decoding="async" />
               <figcaption>Thoughtful details, finished by hand.</figcaption>
             </figure>
             <div class="wb-about__story-copy">

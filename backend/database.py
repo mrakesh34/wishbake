@@ -59,6 +59,13 @@ def init_db():
                 "delivery_fee": "FLOAT NOT NULL DEFAULT 149",
                 "payment_method": "VARCHAR(20) NOT NULL DEFAULT 'COD'",
                 "payment_status": "VARCHAR(20) NOT NULL DEFAULT 'PENDING'",
+                "cf_order_id": "VARCHAR(100)",
+                "payment_session_id": "VARCHAR(255)",
+                "cf_payment_id": "VARCHAR(100)",
+                "payment_gateway_env": "VARCHAR(20)",
+                "payment_reference": "VARCHAR(120)",
+                "payment_message": "VARCHAR(255)",
+                "paid_at": "VARCHAR(50)",
             },
         }
         with engine.begin() as connection:
@@ -79,6 +86,11 @@ def init_db():
     # Seed and sync initial cakes catalog so category/metadata updates apply to existing DB rows
     db = SessionLocal()
     try:
+        preset_ids = {cake["id"] for cake in PRESET_CAKES}
+        stale_cakes = db.query(CakeDB).filter(CakeDB.id.notin_(preset_ids)).all()
+        for stale in stale_cakes:
+            db.delete(stale)
+
         existing_cakes = {c.id: c for c in db.query(CakeDB).all()}
         for cake in PRESET_CAKES:
             db_cake = existing_cakes.get(cake["id"])

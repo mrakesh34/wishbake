@@ -10,7 +10,7 @@ export function renderMinimalTermsSection(prefix = 'wb') {
         <div class="wb-terms__grid">
           <article class="wb-terms__item">
             <h3>Pricing &amp; Payments</h3>
-            <p>All prices are listed in Indian Rupees (INR / ₹). Online payments are structured for UPI, cards, and netbanking via Cashfree Payments alongside Cash on Delivery for eligible Bhubaneswar orders.</p>
+            <p>All prices are listed in Indian Rupees (INR / ₹). Online payments are structured for UPI, cards, and netbanking via our secure payment gateway alongside Cash on Delivery for eligible Bhubaneswar orders.</p>
           </article>
           <article class="wb-terms__item">
             <h3>Order Confirmation &amp; Variations</h3>

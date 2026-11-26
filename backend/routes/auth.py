@@ -25,6 +25,7 @@ from backend.models import (
     UpdateProfileRequest,
     UserProfile,
     VerifyOtpRequest,
+    serialize_order_response,
 )
 from backend.services.email_service import EmailDeliveryError, send_otp_email
 
@@ -280,7 +281,7 @@ async def _dispatch_signup_otp(
     db.flush()
 
     try:
-        delivery_channel = await send_otp_email(
+        await send_otp_email(
             to_email=email,
             otp=otp_code,
             user_name=name,
@@ -291,7 +292,6 @@ async def _dispatch_signup_otp(
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     db.commit()
-    dev_otp = otp_code if delivery_channel == "dev_simulator" else None
 
     return SendOtpResponse(
         success=True,
@@ -300,7 +300,6 @@ async def _dispatch_signup_otp(
         message=f"A 6-digit verification code has been sent to {email}.",
         expires_in_seconds=OTP_EXPIRY_SECONDS,
         resend_cooldown_seconds=OTP_RESEND_COOLDOWN_SECONDS,
-        dev_otp=dev_otp,
     )
 
 
@@ -525,25 +524,4 @@ def save_cart(payload: dict, user: UserProfile = Depends(require_auth), db: Sess
 @router.get("/orders", response_model=list[OrderResponse])
 def get_user_orders(user: UserProfile = Depends(require_auth), db: Session = Depends(get_db)):
     orders = db.query(OrderDB).filter(OrderDB.user_id == user.user_id).order_by(OrderDB.created_at.desc()).all()
-    return [
-        OrderResponse(
-            order_id=o.order_id,
-            customer_name=o.customer_name,
-            customer_email=o.customer_email,
-            customer_phone=o.customer_phone,
-            delivery_address=o.delivery_address,
-            delivery_date=o.delivery_date,
-            delivery_time_slot=o.delivery_time_slot,
-            recipient_name=o.recipient_name,
-            special_instructions=o.special_instructions,
-            total_amount=o.total_amount,
-            delivery_fee=o.delivery_fee,
-            payment_method=o.payment_method,
-            payment_status=o.payment_status,
-            currency="INR",
-            status=o.status,
-            created_at=o.created_at,
-            items=o.items or [],
-        )
-        for o in orders
-    ]
+    return [serialize_order_response(o) for o in orders]

@@ -11,6 +11,7 @@ from backend.database import init_db, engine
 from backend.routes.catalog import router as catalog_router
 from backend.routes.orders import router as orders_router
 from backend.routes.auth import router as auth_router
+from backend.routes.payments import router as payments_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,6 +41,7 @@ app.add_middleware(
 app.include_router(catalog_router)
 app.include_router(orders_router)
 app.include_router(auth_router)
+app.include_router(payments_router)
 
 @app.get("/health")
 def health_check():

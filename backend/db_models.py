@@ -60,11 +60,27 @@ class OrderDB(Base):
     delivery_fee = Column(Float, nullable=False, default=149.0)
     payment_method = Column(String(20), nullable=False, default="COD")
     payment_status = Column(String(20), nullable=False, default="PENDING")
+    cf_order_id = Column(String(100), nullable=True)
+    payment_session_id = Column(String(255), nullable=True)
+    cf_payment_id = Column(String(100), nullable=True)
+    payment_gateway_env = Column(String(20), nullable=True)
+    payment_reference = Column(String(120), nullable=True)
+    payment_message = Column(String(255), nullable=True)
+    paid_at = Column(String(50), nullable=True)
     currency = Column(String(10), default="INR")
     status = Column(String(50), default="CONFIRMED")
     created_at = Column(String(50), default=lambda: datetime.utcnow().isoformat() + "Z")
     items = Column(JSON, default=list)
     user_id = Column(String(50), index=True, nullable=True)
+
+class WebhookEventDB(Base):
+    __tablename__ = "webhook_events"
+
+    idempotency_key = Column(String(255), primary_key=True, index=True)
+    order_id = Column(String(50), index=True, nullable=True)
+    event_type = Column(String(80), nullable=False)
+    cf_payment_id = Column(String(100), nullable=True)
+    processed_at = Column(String(50), default=lambda: datetime.utcnow().isoformat() + "Z")
 
 class CartDB(Base):
     __tablename__ = "carts"

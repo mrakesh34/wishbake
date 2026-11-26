@@ -1,4 +1,9 @@
 import { authManager } from '../services/AuthManager.js';
+import {
+  launchOnlineCheckout,
+  retryOnlinePayment,
+  verifyOnlinePayment
+} from '../services/paymentGateway.js';
 import { escapeHtml, formatINR, showToast } from '../utils/ui.js';
 import {
   clearFieldErrors,
@@ -236,42 +241,134 @@ export class AccountDrawer {
 
     container.innerHTML = `
       <div class="wb-orders-list">
-        ${this.orders.map(order => `
-          <article class="wb-order-card">
-            <div class="wb-order-card__head">
-              <div>
-                <span class="wb-order-card__id">${escapeHtml(order.order_id)}</span>
-                <p class="wb-order-card__date">${escapeHtml(new Date(order.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' }))}</p>
-              </div>
-              <span class="wb-order-card__status">
-                <span class="material-symbols-outlined" aria-hidden="true">local_shipping</span>
-                ${escapeHtml(order.status)}
-              </span>
-            </div>
+        ${this.orders.map(order => {
+          const statusClass = order.status === 'CONFIRMED'
+            ? 'is-confirmed'
+            : (order.status === 'CANCELLED' ? 'is-failed' : 'is-pending');
+          const statusIcon = order.status === 'CONFIRMED'
+            ? 'local_shipping'
+            : (order.status === 'CANCELLED' ? 'cancel' : 'schedule');
+          const canRetryOnline = order.payment_method === 'ONLINE'
+            && order.payment_status !== 'PAID'
+            && order.status !== 'CANCELLED';
 
-            <div class="wb-order-card__items">
-              ${(order.items || []).map(item => `
-                <div class="wb-order-card__item">
-                  <span>${item.quantity}× ${escapeHtml(item.title)}</span>
-                  <strong>${formatINR(item.unit_price * item.quantity)}</strong>
+          return `
+            <article class="wb-order-card">
+              <div class="wb-order-card__head">
+                <div>
+                  <span class="wb-order-card__id">${escapeHtml(order.order_id)}</span>
+                  <p class="wb-order-card__date">${escapeHtml(new Date(order.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' }))}</p>
                 </div>
-              `).join('')}
-            </div>
+                <span class="wb-order-card__status ${statusClass}">
+                  <span class="material-symbols-outlined" aria-hidden="true">${statusIcon}</span>
+                  ${escapeHtml(order.status)}
+                </span>
+              </div>
 
-            <div class="wb-order-card__meta">
-              <div><span>Payment</span><strong>${order.payment_method === 'COD' ? 'Cash on Delivery' : (order.payment_method === 'CASHFREE' ? 'Cashfree Online Payment' : escapeHtml(order.payment_method))} · ${escapeHtml(order.payment_status || 'PENDING')}</strong></div>
-              <div><span>Delivery Slot</span><strong>${escapeHtml(order.delivery_date)} (${escapeHtml(order.delivery_time_slot || 'Standard')})</strong></div>
-              <div><span>Address</span><strong>${escapeHtml(order.delivery_address)}</strong></div>
-            </div>
+              <div class="wb-order-card__items">
+                ${(order.items || []).map(item => `
+                  <div class="wb-order-card__item">
+                    <span>${item.quantity}× ${escapeHtml(item.title)}</span>
+                    <strong>${formatINR(item.unit_price * item.quantity)}</strong>
+                  </div>
+                `).join('')}
+              </div>
 
-            <div class="wb-order-card__total">
-              <span>Order Total</span>
-              <strong>${formatINR(order.total_amount)}</strong>
-            </div>
-          </article>
-        `).join('')}
+              <div class="wb-order-card__meta">
+                <div><span>Payment</span><strong>${order.payment_method === 'COD' ? 'Cash on Delivery' : (order.payment_method === 'ONLINE' ? 'Online Payment' : escapeHtml(order.payment_method))} · ${escapeHtml(order.payment_status || 'PENDING')}</strong></div>
+                <div><span>Delivery Slot</span><strong>${escapeHtml(order.delivery_date)} (${escapeHtml(order.delivery_time_slot || 'Standard')})</strong></div>
+                <div><span>Address</span><strong>${escapeHtml(order.delivery_address)}</strong></div>
+              </div>
+
+              <div class="wb-order-card__total">
+                <span>Order Total</span>
+                <strong>${formatINR(order.total_amount)}</strong>
+              </div>
+
+              ${canRetryOnline ? `
+                <div class="wb-order-card__actions">
+                  <button type="button" class="wb-button wb-button--primary retry-online-pay-btn" data-order-id="${escapeHtml(order.order_id)}">
+                    Complete Payment
+                  </button>
+                  <button type="button" class="wb-button wb-button--outline verify-online-pay-btn" data-order-id="${escapeHtml(order.order_id)}">
+                    Refresh Status
+                  </button>
+                </div>
+              ` : ''}
+            </article>
+          `;
+        }).join('')}
       </div>
     `;
+
+    container.querySelectorAll('.retry-online-pay-btn').forEach(btn => {
+      btn.addEventListener('click', () => this.handleRetryOrderPayment(btn.dataset.orderId, btn));
+    });
+    container.querySelectorAll('.verify-online-pay-btn').forEach(btn => {
+      btn.addEventListener('click', () => this.handleRefreshOrderStatus(btn.dataset.orderId, btn));
+    });
+  }
+
+  async handleRetryOrderPayment(orderId, btn) {
+    const token = authManager.getToken();
+    if (!token || !orderId) return;
+    if (btn) btn.disabled = true;
+
+    try {
+      const orderData = await retryOnlinePayment(orderId, token);
+      if (orderData.payment_status === 'PAID') {
+        showToast('Payment already verified for this order!', 'success');
+        authManager.fetchMe().catch(() => {});
+        await this.loadOrders();
+        return;
+      }
+
+      this.close();
+      const checkoutResult = await launchOnlineCheckout(
+        orderData.payment_session_id,
+        orderData.gateway_mode || orderData.payment_gateway_env
+      );
+      if (checkoutResult.outcome === 'redirect') return;
+      if (checkoutResult.outcome === 'cancelled' || checkoutResult.outcome === 'error') {
+        showToast(checkoutResult.message, checkoutResult.outcome === 'error' ? 'error' : 'info', 4500);
+        return;
+      }
+
+      const verification = await verifyOnlinePayment(orderId, token);
+      if (verification.order_status === 'PAID') {
+        showToast('Payment verified! Order confirmed.', 'success');
+        authManager.fetchMe().catch(() => {});
+      } else {
+        showToast('Payment is not completed yet.', 'warning');
+      }
+      await this.loadOrders();
+    } catch (err) {
+      showToast(err.message || 'Could not resume payment.', 'error', 4500);
+      await this.loadOrders();
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  async handleRefreshOrderStatus(orderId, btn) {
+    const token = authManager.getToken();
+    if (!token || !orderId) return;
+    if (btn) btn.disabled = true;
+
+    try {
+      const verification = await verifyOnlinePayment(orderId, token);
+      if (verification.order_status === 'PAID') {
+        showToast('Payment confirmed!', 'success');
+        authManager.fetchMe().catch(() => {});
+      } else {
+        showToast(`Current payment status: ${verification.order_status}`, 'info');
+      }
+      await this.loadOrders();
+    } catch (err) {
+      showToast(err.message || 'Could not verify order status.', 'error', 4500);
+    } finally {
+      if (btn) btn.disabled = false;
+    }
   }
 
   renderProfileTab() {

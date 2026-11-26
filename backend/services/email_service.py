@@ -54,19 +54,6 @@ def is_brevo_configured() -> bool:
     return bool(cfg["api_key"] and cfg["sender_email"] and "@" in cfg["sender_email"])
 
 
-def is_dev_otp_fallback_allowed() -> bool:
-    """Allow console/response OTP preview only outside production when Brevo is unconfigured."""
-    if is_brevo_configured():
-        return False
-    environment = os.getenv("ENVIRONMENT", "development").strip().lower()
-    explicit_flag = os.getenv("ALLOW_DEV_OTP_FALLBACK", "").strip().lower()
-    if explicit_flag in ("true", "1", "yes"):
-        return environment != "production"
-    if explicit_flag in ("false", "0", "no"):
-        return False
-    return environment != "production"
-
-
 def build_otp_html_email(
     otp: str,
     user_name: Optional[str] = None,
@@ -164,14 +151,6 @@ async def send_otp_email(
     cfg = get_brevo_config()
 
     if not is_brevo_configured():
-        if is_dev_otp_fallback_allowed():
-            logger.info("=" * 60)
-            logger.info("[DEV EMAIL SIMULATOR] WISHBAKE SIGN-UP OTP DISPATCH")
-            logger.info("Recipient: %s (Name: %s)", to_email, user_name or "Guest")
-            logger.info("Verification Code: >>> %s <<<", otp)
-            logger.info("Expiry: %d Minutes", expiry_minutes)
-            logger.info("=" * 60)
-            return "dev_simulator"
         raise EmailDeliveryError("Email verification service is not configured on the server.")
 
     clean_name = (user_name or "").strip() or to_email.split("@")[0]

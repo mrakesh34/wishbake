@@ -82,9 +82,7 @@ PRESET_CAKES: List[Dict[str, Any]] = [
         "description": "Caramelized Belgian speculoos sponge layered with velvety Biscoff spread, whipped mascarpone rosettes, biscoff cookie crumble border, and warm cookie butter drizzle.",
         "image": "/assets/images/lotus_biscoff_front.jpg",
         "images": [
-            "/assets/images/lotus_biscoff_front.jpg",
-            "/assets/images/lotus_biscoff_angle.jpg",
-            "/assets/images/lotus_biscoff_top.jpg"
+            "/assets/images/lotus_biscoff_front.jpg"
         ],
         "badge": "Trending",
         "servings": "8-10",
@@ -100,9 +98,7 @@ PRESET_CAKES: List[Dict[str, Any]] = [
         "description": "Fusion patisserie featuring a cardamom-infused velvet cream cheese tier topped with syrup-drenched mini gulab jamuns, 24k gold leaf, and crushed pistachio dusting.",
         "image": "/assets/images/gulab_cheesecake_front.jpg",
         "images": [
-            "/assets/images/gulab_cheesecake_front.jpg",
-            "/assets/images/gulab_cheesecake_angle.jpg",
-            "/assets/images/gulab_cheesecake_top.jpg"
+            "/assets/images/gulab_cheesecake_front.jpg"
         ],
         "badge": "Festive Highlight",
         "servings": "10-12",
@@ -118,33 +114,13 @@ PRESET_CAKES: List[Dict[str, Any]] = [
         "description": "Two elegant ivory frosting tiers embellished with intricate gold filigree, organic marigold petals, and saffron sponge cake layers.",
         "image": "/assets/images/marigold_elegance_front.jpg",
         "images": [
-            "/assets/images/marigold_elegance_front.jpg",
-            "/assets/images/marigold_elegance_angle.jpg",
-            "/assets/images/marigold_elegance_top.jpg"
+            "/assets/images/marigold_elegance_front.jpg"
         ],
         "badge": "Masterpiece",
         "servings": "20-25",
         "weight_lbs": 4.0,
         "rating": 5.0,
         "reviews": 94
-    },
-    {
-        "id": "cake-rose-pistachio",
-        "title": "Persian Rose & Pistachio Cloud",
-        "category": "Birthday",
-        "price": 1499.0,
-        "description": "Delicate rosewater infused sponge cake filled with slow-churned pistachio butter cream, decorated with dried rosebuds and silver vark.",
-        "image": "/assets/images/rose_pistachio_front.jpg",
-        "images": [
-            "/assets/images/rose_pistachio_front.jpg",
-            "/assets/images/rose_pistachio_angle.jpg",
-            "/assets/images/rose_pistachio_top.jpg"
-        ],
-        "badge": "Chef Special",
-        "servings": "8-10",
-        "weight_lbs": 1.5,
-        "rating": 4.8,
-        "reviews": 162
     },
     {
         "id": "cake-wishbake-signature",
@@ -154,9 +130,7 @@ PRESET_CAKES: List[Dict[str, Any]] = [
         "description": "Our signature strawberry rose & sparkling berry sponge layered with vanilla bean mousse, hand-painted edible gold foil, and fresh wild strawberries.",
         "image": "/assets/images/strawberry_royale_front.jpg",
         "images": [
-            "/assets/images/strawberry_royale_front.jpg",
-            "/assets/images/strawberry_royale_angle.jpg",
-            "/assets/images/strawberry_royale_top.jpg"
+            "/assets/images/strawberry_royale_front.jpg"
         ],
         "badge": "Best Seller",
         "servings": "12-14",
@@ -172,33 +146,13 @@ PRESET_CAKES: List[Dict[str, Any]] = [
         "description": "Rich 70% Valrhona dark chocolate mousse cake, glossy mirror glaze, handmade dark chocolate macarons, and sea salt flakes.",
         "image": "/assets/images/midnight_truffle_front.jpg",
         "images": [
-            "/assets/images/midnight_truffle_front.jpg",
-            "/assets/images/midnight_truffle_angle.jpg",
-            "/assets/images/midnight_truffle_top.jpg"
+            "/assets/images/midnight_truffle_front.jpg"
         ],
         "badge": "Decadent",
         "servings": "10-12",
         "weight_lbs": 2.0,
         "rating": 4.9,
         "reviews": 185
-    },
-    {
-        "id": "cake-citrus-berry-bliss",
-        "title": "Citrus Blossom & Elderflower",
-        "category": "Anniversary",
-        "price": 1599.0,
-        "description": "Bright lemon curd and elderflower soaked cake layers with whipped white chocolate buttercream and fresh blueberries.",
-        "image": "/assets/images/citrus_elderflower_front.jpg",
-        "images": [
-            "/assets/images/citrus_elderflower_front.jpg",
-            "/assets/images/citrus_elderflower_angle.jpg",
-            "/assets/images/citrus_elderflower_top.jpg"
-        ],
-        "badge": "Seasonal",
-        "servings": "8-10",
-        "weight_lbs": 1.5,
-        "rating": 4.7,
-        "reviews": 79
     },
     {
         "id": "cake-rasmalai-royale",
@@ -208,9 +162,7 @@ PRESET_CAKES: List[Dict[str, Any]] = [
         "description": "Three-tier rasmalai-infused sponge with saffron cream layers, hand-piped royal icing, edible gold leaf cascades, and premium dry fruit garnish.",
         "image": "/assets/images/rasmalai_royale_front.jpg",
         "images": [
-            "/assets/images/rasmalai_royale_front.jpg",
-            "/assets/images/rasmalai_royale_angle.jpg",
-            "/assets/images/rasmalai_royale_top.jpg"
+            "/assets/images/rasmalai_royale_front.jpg"
         ],
         "badge": "Grand Luxe",
         "servings": "40-50",
@@ -226,105 +178,13 @@ PRESET_CAKES: List[Dict[str, Any]] = [
         "description": "India's favourite butterscotch sponge with crunchy praline layers, salted caramel drizzle, and toasted almond flakes.",
         "image": "/assets/images/butterscotch_crunch_front.jpg",
         "images": [
-            "/assets/images/butterscotch_crunch_front.jpg",
-            "/assets/images/butterscotch_crunch_angle.jpg",
-            "/assets/images/butterscotch_crunch_top.jpg"
+            "/assets/images/butterscotch_crunch_front.jpg"
         ],
         "badge": "Fan Favourite",
         "servings": "8-10",
         "weight_lbs": 1.5,
         "rating": 4.8,
         "reviews": 340
-    },
-    {
-        "id": "cake-black-forest-classic",
-        "title": "Heritage Black Forest Gâteau",
-        "category": "Birthday",
-        "price": 849.0,
-        "description": "Classic dark chocolate layers soaked in spiced morello cherry reduction, whipped cream rosettes, chocolate curls, and maraschino cherries.",
-        "image": "/assets/images/black_forest_front.jpg",
-        "images": [
-            "/assets/images/black_forest_front.jpg",
-            "/assets/images/black_forest_angle.jpg",
-            "/assets/images/black_forest_top.jpg"
-        ],
-        "badge": "Classic",
-        "servings": "8-10",
-        "weight_lbs": 1.5,
-        "rating": 4.7,
-        "reviews": 420
-    },
-    {
-        "id": "cake-paan-delight",
-        "title": "Calcutta Paan & Gulkand Fusion",
-        "category": "Signature Fusion",
-        "price": 1699.0,
-        "description": "An aromatic paan-flavoured sponge with gulkand cream filling, betel leaf garnish, and rose petal accents. A fusion masterpiece.",
-        "image": "/assets/images/paan_fusion_front.jpg",
-        "images": [
-            "/assets/images/paan_fusion_front.jpg",
-            "/assets/images/paan_fusion_angle.jpg",
-            "/assets/images/paan_fusion_top.jpg"
-        ],
-        "badge": "Signature Fusion",
-        "servings": "10-12",
-        "weight_lbs": 2.0,
-        "rating": 4.9,
-        "reviews": 98
-    },
-    {
-        "id": "cake-redvelvet-cheesecake",
-        "title": "Red Velvet Baked Cheesecake Dream",
-        "category": "Anniversary",
-        "price": 1699.0,
-        "description": "Classic crimson cocoa sponge sandwiching a dense New York-style baked cheesecake center, finished with silky cream cheese frosting and velvet crumb border.",
-        "image": "/assets/images/redvelvet_cheesecake_front.jpg",
-        "images": [
-            "/assets/images/redvelvet_cheesecake_front.jpg",
-            "/assets/images/redvelvet_cheesecake_angle.jpg",
-            "/assets/images/redvelvet_cheesecake_top.jpg"
-        ],
-        "badge": "Romantic",
-        "servings": "8-10",
-        "weight_lbs": 2.0,
-        "rating": 4.9,
-        "reviews": 174
-    },
-    {
-        "id": "cake-mishti-doi",
-        "title": "Kolkata Baked Mishti Doi Honeycomb",
-        "category": "Signature Fusion",
-        "price": 1849.0,
-        "description": "Caramelized terracotta-baked mishti doi custard layer on a buttery cardamom graham base, topped with raw honeycomb clusters and roasted pistachio slivers.",
-        "image": "/assets/images/mishti_doi_front.jpg",
-        "images": [
-            "/assets/images/mishti_doi_front.jpg",
-            "/assets/images/mishti_doi_angle.jpg",
-            "/assets/images/mishti_doi_top.jpg"
-        ],
-        "badge": "Heritage Fusion",
-        "servings": "10-12",
-        "weight_lbs": 2.0,
-        "rating": 4.8,
-        "reviews": 142
-    },
-    {
-        "id": "cake-anjeer-badam",
-        "title": "Royal Anjeer & Roasted Badam Gateau",
-        "category": "Diwali Special",
-        "price": 2399.0,
-        "description": "Slow-stewed Turkish fig compote layered with honeyed saffron cream and slow-roasted Mamra almond flakes, wrapped in a smooth ivory buttercream drape.",
-        "image": "/assets/images/anjeer_badam_front.jpg",
-        "images": [
-            "/assets/images/anjeer_badam_front.jpg",
-            "/assets/images/anjeer_badam_angle.jpg",
-            "/assets/images/anjeer_badam_top.jpg"
-        ],
-        "badge": "Festive Luxe",
-        "servings": "12-14",
-        "weight_lbs": 2.5,
-        "rating": 4.9,
-        "reviews": 110
     },
     {
         "id": "cake-saffron-rose-grand",
@@ -334,33 +194,13 @@ PRESET_CAKES: List[Dict[str, Any]] = [
         "description": "A magnificent two-tier spectacle with damask rosewater infusion, Kashmiri saffron mousse, hand-piped intricate royal filigree, and genuine 24K gold foil cascading downward.",
         "image": "/assets/images/saffron_rose_front.jpg",
         "images": [
-            "/assets/images/saffron_rose_front.jpg",
-            "/assets/images/saffron_rose_angle.jpg",
-            "/assets/images/saffron_rose_top.jpg"
+            "/assets/images/saffron_rose_front.jpg"
         ],
         "badge": "Grand Luxe",
         "servings": "28-35",
         "weight_lbs": 5.0,
         "rating": 5.0,
         "reviews": 78
-    },
-    {
-        "id": "cake-banoffee-crunch",
-        "title": "Banoffee Dulce de Leche Caramel Tower",
-        "category": "Birthday",
-        "price": 1599.0,
-        "description": "Slow-caramelized banana puree and espresso chantilly cream between layers of golden vanilla sponge, crowned with toffee crunch shards and dark chocolate curls.",
-        "image": "/assets/images/banoffee_crunch_front.jpg",
-        "images": [
-            "/assets/images/banoffee_crunch_front.jpg",
-            "/assets/images/banoffee_crunch_angle.jpg",
-            "/assets/images/banoffee_crunch_top.jpg"
-        ],
-        "badge": "Crowd Pleaser",
-        "servings": "8-10",
-        "weight_lbs": 2.0,
-        "rating": 4.8,
-        "reviews": 204
     }
 ]
 

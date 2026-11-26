@@ -1,5 +1,9 @@
 import { authManager } from '../services/AuthManager.js';
 import { apiUrl } from '../services/api.js';
+import {
+  launchOnlineCheckout,
+  verifyOnlinePayment
+} from '../services/paymentGateway.js';
 import { escapeHtml, formatINR, resolveApiError, showToast } from '../utils/ui.js';
 import {
   DELIVERY_FEE_INR,
@@ -463,29 +467,14 @@ export class CartDrawer {
 
       if (res.ok) {
         const orderData = await res.json();
-        this.cart = [];
-        this.renderCartItems();
-        if (this.onCartUpdate) this.onCartUpdate(this.cart);
-        authManager.fetchMe().catch(() => {});
 
-        this.closeCheckoutModal();
-
-        document.getElementById('confirmed-order-id').textContent = orderData.order_id;
-        document.getElementById('confirmed-delivery-date').textContent = orderData.delivery_date;
-        document.getElementById('confirmed-total').textContent = formatINR(orderData.total_amount);
-        const confirmedPayEl = document.getElementById('confirmed-payment-method');
-        if (confirmedPayEl) {
-          confirmedPayEl.textContent = orderData.payment_method === 'CASHFREE' ? 'Cashfree Online Payment' : 'Cash on Delivery';
-        }
-        const confirmedSubEl = document.getElementById('confirmed-order-subtitle');
-        if (confirmedSubEl) {
-          confirmedSubEl.textContent = orderData.payment_method === 'CASHFREE'
-            ? 'Thank you! Your Cashfree online payment order has been received by our pastry kitchen.'
-            : 'Thank you! Your Cash on Delivery order has been sent to our pastry kitchen.';
+        if (orderData.payment_method === 'ONLINE') {
+          this.closeCheckoutModal();
+          await this.processOnlineOrderPayment(orderData, token);
+          return;
         }
 
-        document.getElementById('order-success-modal')?.classList.remove('is-hidden');
-        showToast('Order placed! Confirmation details saved to My Orders.', 'success');
+        this.completeConfirmedOrder(orderData);
       } else {
         const errData = await res.json().catch(() => null);
         showToast(resolveApiError(errData, 'Failed to process order. Please check your details.'), 'error', 5000);
@@ -501,21 +490,110 @@ export class CartDrawer {
     }
   }
 
+  completeConfirmedOrder(orderData) {
+    this.cart = [];
+    this.renderCartItems();
+    if (this.onCartUpdate) this.onCartUpdate(this.cart);
+    authManager.fetchMe().catch(() => {});
+
+    this.closeCheckoutModal();
+    this.showOrderConfirmationModal(orderData);
+    showToast('Order placed! Confirmation details saved to My Orders.', 'success');
+  }
+
+  showOrderConfirmationModal(orderData) {
+    document.getElementById('confirmed-order-id').textContent = orderData.order_id;
+    document.getElementById('confirmed-delivery-date').textContent = orderData.delivery_date;
+    document.getElementById('confirmed-total').textContent = formatINR(orderData.total_amount);
+
+    const isOnlinePaid = orderData.payment_method === 'ONLINE' && orderData.payment_status === 'PAID';
+    const confirmedPayEl = document.getElementById('confirmed-payment-method');
+    if (confirmedPayEl) {
+      if (orderData.payment_method === 'ONLINE') {
+        confirmedPayEl.textContent = isOnlinePaid
+          ? 'Online Payment (Paid)'
+          : `Online Payment (${orderData.payment_status || 'PENDING'})`;
+      } else {
+        confirmedPayEl.textContent = 'Cash on Delivery';
+      }
+    }
+
+    const confirmedSubEl = document.getElementById('confirmed-order-subtitle');
+    if (confirmedSubEl) {
+      confirmedSubEl.textContent = isOnlinePaid
+        ? 'Payment verified! Your order has been sent to our pastry kitchen.'
+        : 'Thank you! Your Cash on Delivery order has been sent to our pastry kitchen.';
+    }
+
+    document.getElementById('order-success-modal')?.classList.remove('is-hidden');
+  }
+
+  async processOnlineOrderPayment(orderData, authToken) {
+    const checkoutResult = await launchOnlineCheckout(
+      orderData.payment_session_id,
+      orderData.gateway_mode || orderData.payment_gateway_env
+    );
+
+    if (checkoutResult.outcome === 'redirect') {
+      return;
+    }
+
+    if (checkoutResult.outcome === 'cancelled') {
+      showToast(checkoutResult.message, 'info', 5000);
+      return;
+    }
+
+    if (checkoutResult.outcome === 'error') {
+      showToast(checkoutResult.message, 'error', 5000);
+      return;
+    }
+
+    showToast('Verifying payment...', 'info', 2500);
+    try {
+      const verification = await verifyOnlinePayment(orderData.order_id, authToken);
+      this.handleVerifiedOnlineResult(verification);
+    } catch (err) {
+      showToast(err.message || 'Could not verify payment status. Check My Orders shortly.', 'error', 5000);
+    }
+  }
+
+  handleVerifiedOnlineResult(verification) {
+    const orderStatus = verification?.order_status;
+    const paymentStatus = verification?.payment_status;
+
+    if (orderStatus === 'PAID') {
+      this.completeConfirmedOrder(verification.order);
+      return;
+    }
+
+    if (orderStatus === 'ACTIVE' && (paymentStatus === 'PENDING' || paymentStatus === 'NOT_ATTEMPTED' || paymentStatus === 'USER_DROPPED')) {
+      showToast(
+        'Payment is awaiting confirmation. Your bag is saved — you can also complete or check it in My Orders.',
+        'warning',
+        5500
+      );
+      return;
+    }
+
+    showToast(
+      'Payment could not be completed. Your bag is still saved so you can try again or choose Cash on Delivery.',
+      'error',
+      5500
+    );
+  }
+
   syncPaymentMethodUI() {
     const selectedMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'COD';
-    const isCashfree = selectedMethod === 'CASHFREE';
+    const isOnline = selectedMethod === 'ONLINE';
 
     document.querySelectorAll('[data-payment-card]').forEach(card => {
       card.classList.toggle('is-selected', card.dataset.paymentCard === selectedMethod);
     });
 
-    const notice = document.getElementById('cashfree-payment-notice');
-    if (notice) notice.classList.toggle('is-hidden', !isCashfree);
-
     const submitBtn = document.getElementById('place-order-submit-btn');
     if (submitBtn) {
-      submitBtn.innerHTML = isCashfree
-        ? `<span id="place-order-btn-label">Proceed to Cashfree Payment</span><span class="material-symbols-outlined" aria-hidden="true">lock</span>`
+      submitBtn.innerHTML = isOnline
+        ? `<span id="place-order-btn-label">Proceed to Pay</span><span class="material-symbols-outlined" aria-hidden="true">lock</span>`
         : `<span id="place-order-btn-label">Place COD Order</span><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>`;
     }
   }

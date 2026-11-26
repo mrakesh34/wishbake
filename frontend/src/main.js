@@ -6,9 +6,10 @@ import { AboutView } from './components/AboutView.js';
 import { CartDrawer } from './components/CartDrawer.js';
 import { ScrollAnimator } from './components/ScrollAnimator.js';
 import { authManager } from './services/AuthManager.js';
+import { initPaymentGateway, verifyOnlinePayment } from './services/paymentGateway.js';
 import { AuthModal } from './components/AuthModal.js';
 import { AccountDrawer } from './components/AccountDrawer.js';
-import { escapeHtml } from './utils/ui.js';
+import { escapeHtml, showToast } from './utils/ui.js';
 
 const GUEST_CART_KEY = 'wb_guest_cart';
 
@@ -86,6 +87,31 @@ class App {
     this.setupMobileNav();
     window.addEventListener('hashchange', () => this.routePage());
     this.routePage();
+
+    initPaymentGateway();
+    this.handlePaymentReturnIfPresent();
+  }
+
+  async handlePaymentReturnIfPresent() {
+    if (window.location.pathname !== '/payment-return') return;
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('order_id');
+    window.history.replaceState({}, '', '/#home');
+
+    if (!orderId) return;
+    const token = authManager.getToken();
+    if (!token) {
+      showToast('Please sign in to view your payment status in My Orders.', 'info', 5000);
+      return;
+    }
+
+    showToast('Verifying your payment...', 'info', 2500);
+    try {
+      const verification = await verifyOnlinePayment(orderId, token);
+      this.cartDrawer?.handleVerifiedOnlineResult(verification);
+    } catch (err) {
+      showToast(err.message || 'Could not verify payment status. Check My Orders shortly.', 'error', 5000);
+    }
   }
 
   setupMobileNav() {
